@@ -136,19 +136,19 @@ public class MenuObject {
 	}
 	
 	public void slideOutRight(int acceleration) {
-		_sprite.accelerate(acceleration, 0);
+		_sprite.accelerateXY(acceleration, 0);
 	}
 	
 	public void slideOutLeft(int acceleration) {
-		_sprite.accelerate(-acceleration, 0);
+		_sprite.accelerateXY(-acceleration, 0);
 	}
 	
 	public void slideOutDown(int acceleration) {
-		_sprite.accelerate(0, acceleration);
+		_sprite.accelerateXY(0, acceleration);
 	}
 	
 	public void slideOutUp(int acceleration) {
-		_sprite.accelerate(0, -acceleration);
+		_sprite.accelerateXY(0, -acceleration);
 	}
 	
 	public void fadeIn(int time) {

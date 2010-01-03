@@ -25,6 +25,6 @@ public class AccelerateParticle extends ParticleModifier {
 	}
 
 	public void onCreate(Particle particle) {
-		particle.accelerate(((float)Math.random() * (_maxAccelerationX - _minAccelerationX)) + _minAccelerationX, ((float)Math.random() * (_maxAccelerationY - _minAccelerationY)) + _minAccelerationY);
+		particle.accelerateXY(((float)Math.random() * (_maxAccelerationX - _minAccelerationX)) + _minAccelerationX, ((float)Math.random() * (_maxAccelerationY - _minAccelerationY)) + _minAccelerationY);
 	}
 }

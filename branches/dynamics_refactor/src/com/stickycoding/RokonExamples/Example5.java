@@ -66,7 +66,7 @@ public class Example5 extends RokonActivity {
 		if(hotspot.equals(goHotspot)) {
 			carSprite.resetDynamics();
 			carSprite.setXY(80, 180);
-			carSprite.accelerate(5, 0);
+			carSprite.accelerateXY(5, 0);
 		}
 	}
 	

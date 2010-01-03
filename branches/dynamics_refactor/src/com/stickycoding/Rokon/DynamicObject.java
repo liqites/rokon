@@ -447,6 +447,12 @@ public class DynamicObject {
 		_accelerationY = 0;
 	}
 	
+	public void accelerate(float speed, float direction) {
+    	_accelerationX = speed * (float) Math.sin(Math.toRadians(direction));
+    	_accelerationY = speed * (float) Math.cos(Math.toRadians(direction)) * -1;
+		setLastUpdate();
+	}
+	
 	/**
 	 * Accelerates a Sprite, note that this is relative to current Acceleration.
 	 * @param accelerationX acceleration in X direction, pixels per second
@@ -454,9 +460,9 @@ public class DynamicObject {
 	 * @param terminalVelocityX specifies a highest possible velocity in X direction, this will trigger reachedTerminalVelocityX
 	 * @param terminalVelocityY specifies a highest possible velocity in Y direction, this will trigger reachedTerminalVelocityY
 	 */
-	public void accelerate(float accelerationX, float accelerationY, float terminalVelocityX, float terminalVelocityY) {
+	public void accelerateXY(float accelerationX, float accelerationY, float terminalVelocityX, float terminalVelocityY) {
 		_stopAtTerminalVelocity = true;
-		_terminalVelocityX = terminalVelocityX;
+		_terminalVelocityX = terminalVelocityX;	
 		_terminalVelocityY = terminalVelocityY;
 		_accelerationX += accelerationX;
 		_accelerationY += accelerationY;
@@ -470,7 +476,7 @@ public class DynamicObject {
 	 * @param accelerationX acceleration in X direction, pixels per second
 	 * @param accelerationY acceleration in Y direction, pixels per second
 	 */
-	public void accelerate(float accelerationX, float accelerationY) {
+	public void accelerateXY(float accelerationX, float accelerationY) {
 		_stopAtTerminalVelocity = false;
 		_accelerationX += accelerationX;
 		_accelerationY += accelerationY;
@@ -505,6 +511,69 @@ public class DynamicObject {
 	}
 	
 	/**
+	 * Set the current velocity given speed and direction
+	 * @param speed speed in pixels per second
+	 * @param direction direction in degrees 
+	 */
+	public void setVelocity(float speed, float direction) {
+    	_velocityX = speed * (float) Math.sin(Math.toRadians(direction));
+    	_velocityY = speed * (float) Math.cos(Math.toRadians(direction)) * -1;
+	}
+	
+	/**
+	 * Increases velocity by the given values
+	 * @param speed
+	 * @param direction
+	 */
+	public void setVelocityRelative(float speed, float direction) {
+    	_velocityX += speed * (float) Math.sin(Math.toRadians(direction));
+    	_velocityY += speed * (float) Math.cos(Math.toRadians(direction)) * -1;
+	}
+	
+	/**
+	 * Gets the current speed of the object (not to be confused with velocity)
+	 * @return current speed in pixels per second
+	 */
+    public float getSpeed() {
+        return (float) Math.sqrt(_velocityX*_velocityX + _velocityY*_velocityY);
+    }
+    
+    /**
+     * Gets the current direction of the object 
+     * If object is not in motion, this will always return 0.
+     * @return current direction in degrees
+     */
+    public float getDirection() {
+    	if (getSpeed() == 0) {
+    		return 0;
+    	}
+    	//float angle = (float) Math.toDegrees(Math.acos((_velocityY * -1)/getSpeed()));
+    	float angle = (float) Math.toDegrees(Math.acos((_velocityY * -1)/getSpeed()));
+    	if (_velocityX < 0) return angle * -1;
+    	return angle;
+    }
+    
+    /**
+     * Sets the speed component of the velocity.
+     * If speed is currently 0, direction will be 0.
+     * @param speed speed in pixels per second
+     */
+    public void setSpeed(float speed) {
+    	float direction = getDirection();
+    	setVelocity(speed, direction);
+    }
+    
+    /**
+     * Sets the direction component of the velocity
+     * If speed is currently 0, this will have no effect (direction will remain 0).
+     * @param direction direction in degrees.
+     */
+    public void setDirection(float direction) {
+    	float speed = getSpeed();
+    	setVelocity(speed, direction);
+    }
+	
+	/**
 	 * @param velocityX instantly sets the velocity of the Sprite in X direction, pixels per second
 	 */
 	public void setVelocityX(float velocityX) {
@@ -523,7 +592,7 @@ public class DynamicObject {
 	 * @param velocityX
 	 * @param velocityY
 	 */
-	public void setVelocity(float velocityX, float velocityY) {
+	public void setVelocityXY(float velocityX, float velocityY) {
 		_velocityX = velocityX;
 		_velocityY = velocityY;
 	}
@@ -561,7 +630,7 @@ public class DynamicObject {
 	 * @param terminalVelocityX
 	 * @param terminalVelocityY
 	 */
-	public void setTerminalVelocity(float terminalVelocityX, float terminalVelocityY) {
+	public void setTerminalVelocityXY(float terminalVelocityX, float terminalVelocityY) {
 		_stopAtTerminalVelocity = true;
 	}
 	
@@ -578,7 +647,7 @@ public class DynamicObject {
 	 * @param velocityX
 	 * @param velocityY
 	 */
-	public void setVelocityRelative(float velocityX, float velocityY) {
+	public void setVelocityRelativeXY(float velocityX, float velocityY) {
 		_velocityX += velocityX;
 		_velocityY += velocityY;
 	}

@@ -25,7 +25,7 @@ public class Gravity extends SpriteModifier {
 	
 	public void onUpdate(Sprite sprite) {
 		long timeDiff = Rokon.getTime() - _lastUpdate;
-		sprite.setVelocityRelative(_gravityX * (float)(timeDiff / 1000), _gravityY * (float)(timeDiff / 1000));
+		sprite.setVelocityRelativeXY(_gravityX * (float)(timeDiff / 1000), _gravityY * (float)(timeDiff / 1000));
 	}
 
 }
