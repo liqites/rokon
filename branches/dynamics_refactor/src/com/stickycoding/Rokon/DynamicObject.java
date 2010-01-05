@@ -446,7 +446,32 @@ public class DynamicObject {
 		_accelerationX = 0;
 		_accelerationY = 0;
 	}
+
 	
+	/**
+	 * Accelerates a Sprite, note that this is relative to current Acceleration.
+	 * @param speed change of speed in pixels per second squared
+	 * @param direction change of direction in degrees per second
+	 * @param terminalSpeed specifies the speed portion of the higest possible velocity
+	 * @param terminalDirection specifies the direction portion of the highest possible velocity
+	 */
+	public void accelerate(float speed, float direction, float terminalSpeed, float terminalDirection) {
+		_stopAtTerminalVelocity = true;
+		_terminalVelocityX = terminalSpeed * (float) Math.sin(Math.toRadians(terminalDirection));
+		_terminalVelocityY = terminalSpeed * (float) Math.cos(Math.toRadians(terminalDirection));
+    	_accelerationX = speed * (float) Math.sin(Math.toRadians(direction));
+    	_accelerationY = speed * (float) Math.cos(Math.toRadians(direction)) * -1;
+    	_triggeredReachTerminalVelocityX = false;
+    	_triggeredReachTerminalVelocityY = false;
+	}
+
+	/**
+	 * Accelerates a Sprite, note that this is relative to current Acceleration.
+	 * @param speed change of speed in pixels per second squared
+	 * @param direction change of direction in degrees per second
+	 * @param terminalSpeed specifies the speed portion of the higest possible velocity
+	 * @param terminalDirection specifies the direction portion of the highest possible velocity
+	 */
 	public void accelerate(float speed, float direction) {
     	_accelerationX = speed * (float) Math.sin(Math.toRadians(direction));
     	_accelerationY = speed * (float) Math.cos(Math.toRadians(direction)) * -1;
@@ -631,15 +656,25 @@ public class DynamicObject {
 	 * @param terminalVelocityY
 	 */
 	public void setTerminalVelocityXY(float terminalVelocityX, float terminalVelocityY) {
+		_terminalVelocityX = terminalVelocityX;
+		_terminalVelocityY = terminalVelocityY;
 		_stopAtTerminalVelocity = true;
 	}
 	
 	public void setTerminalVelocityX(float terminalVelocityX) {
 		_terminalVelocityX = terminalVelocityX;
+		_stopAtTerminalVelocity = true;
 	}
 	
 	public void setTerminalVelocityY(float terminalVelocityY) {
 		_terminalVelocityY = terminalVelocityY;
+		_stopAtTerminalVelocity = true;
+	}
+	
+	public void setTerminalVelocity(float speed, float direction) {
+		_terminalVelocityX = speed * (float) Math.sin(Math.toRadians(direction));
+		_terminalVelocityY = speed * (float) Math.cos(Math.toRadians(direction)) * -1;
+		_stopAtTerminalVelocity = true;
 	}
 	
 	/**
