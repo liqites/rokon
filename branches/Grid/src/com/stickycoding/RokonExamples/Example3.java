@@ -22,7 +22,7 @@ public class Example3 extends RokonActivity {
 	public Sprite carSprite;
 	
     public void onCreate() {
-        createEngine(852, 480, true);
+        createEngine(480, 320, true);
     }
 
 	@Override

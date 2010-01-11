@@ -2,6 +2,11 @@ package com.stickycoding.Rokon;
 
 import com.stickycoding.Rokon.Sprite;
 
+/**
+ * Sprite Container for Grid Control Implementation
+ * @author Jeremy
+ */
+
 public class Container {
 
 	private Sprite _sprite;

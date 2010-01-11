@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import com.stickycoding.Rokon.Sprite;
 import com.stickycoding.Rokon.Container;
 
+/**
+ * Grid Control Implementation
+ * @author Jeremy
+ */
+
 public class Grid {
 
 	private int [] _gridResult;
@@ -32,15 +37,10 @@ public class Grid {
 		_gridHeight = _rows * _caseHeight;
 		moveGrid(_x, _y);
 	}
-/*
+
+	// Todo
 	public void gridCreate(int caseWidth, int caseHeight, int cols, int rows, int x, int y) {
-		Polygon polygon = new Polygon(4);
-		polygon.put(0, 0);
-		polygon.put(0, 40);
-		polygon.put(40, 40);
-		polygon.put(40, 0);
 	}
-*/
 	
 	public void moveGrid(int x, int y) {
 	    int i = 0;
@@ -56,6 +56,18 @@ public class Grid {
 		_y = y;
 	}
 	
+	// Todo
+	public void rotateGrid() {
+	}
+
+	// Todo
+	public void relativeRotateGrid() {
+	}
+
+	// Todo
+	public void smoothMoveOnGrid(Sprite sprite, int casePosX, int casePosY, int duration) {
+	}
+
 	public void moveOnGrid(Sprite sprite, int casePosX, int casePosY) {
 		int _convCasePosX = _x + (casePosX * _caseWidth); 
 		int _convCasePosY = _y + (casePosY * _caseHeight);
@@ -65,18 +77,7 @@ public class Grid {
 			_gridContainer.set(_search, new Container(sprite,casePosX,casePosY));
 		}
 	}
-/*
-	// A faire
-	public void smouthMoveOnGrid(Sprite sprite, int casePosX, int casePosY, int duration) {
-		int _convCasePosX = _x + (casePosX * _caseWidth); 
-		int _convCasePosY = _y + (casePosY * _caseHeight);
-		sprite.setXY(_convCasePosX,_convCasePosY);
-		int _search = spriteBinarySearch(sprite);
-		if (_search >= 0) {
-			_gridContainer.set(_search, new Container(sprite,casePosX,casePosY));
-		}
-	}
-*/
+
 	public int[] getGrid() {
 		_gridResult[0] = _x;
 		_gridResult[1] = _y;
@@ -93,10 +94,18 @@ public class Grid {
 	}
 
 	public int [] getOnGridPosXY(int x, int y) {
-		int col =  (_x + x) / _caseWidth;
-		if (col < 0 || col > _cols ) col = -1;
-		int row =  (_y + y) / _caseHeight; 
-		if (row < 0 || row > _rows ) row = -1;
+		float colfloat =  ( -1 * ( _x - x ) ) / _caseWidth;
+		int col = 0;
+		if (colfloat < 0 || colfloat > _cols ) { col = -1; }
+		else if (colfloat < 0.99) { col = 0; }
+		else { col = (int) colfloat; }
+
+		float rowfloat =  ( -1 * ( _y - y ) ) / _caseHeight;
+		int row = 0;
+		if (rowfloat < 0 || rowfloat > _cols ) { row = -1; }
+		else if (rowfloat < 0.99) { row = 0; }
+		else { row = (int) rowfloat; }
+		
 		int [] colRow = { col, row };
 		return colRow;
 	}
@@ -107,7 +116,6 @@ public class Grid {
 		if (colfloat < 0 || colfloat > _cols ) { col = -1; }
 		else if (colfloat < 0.99) { col = 0; }
 		else { col = (int) colfloat; }
-		Debug.print("col "+col+" = ( -1 * ( "+_x+" - "+x+" ) ) / "+_caseWidth);
 		return col;
 	}
 	
@@ -117,7 +125,6 @@ public class Grid {
 		if (rowfloat < 0 || rowfloat > _cols ) { row = -1; }
 		else if (rowfloat < 0.99) { row = 0; }
 		else { row = (int) rowfloat; }
-		Debug.print("col "+row+" = ( -1 * ( "+_y+" - "+y+" ) ) / "+_caseHeight);
 		return row;
 	}
 
