@@ -32,7 +32,8 @@ public class Launcher extends ListActivity {
 			"Custom Sprite Animation",
 			"Post Processing",
 			"Parallax Background",
-			"Polygon Collision"
+			"Polygon Collision",
+			"Grid Control"
 		};
 		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, examples));
 	}
@@ -120,6 +121,10 @@ public class Launcher extends ListActivity {
 				break;
 			case 19: // Polygon Collision
 				intent = new Intent(this, Example20.class);
+				startActivity(intent);
+				break;
+			case 20: // Grid Control
+				intent = new Intent(this, Example21.class);
 				startActivity(intent);
 				break;
 		}

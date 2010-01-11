@@ -1,4 +1,8 @@
-//	Custom Tile Animation
+/**
+ * @author Jeremy
+ * Example : Custom Tile Animation
+ * 
+ */
 package com.stickycoding.RokonExamples;
 
 import com.stickycoding.Rokon.RokonActivity;

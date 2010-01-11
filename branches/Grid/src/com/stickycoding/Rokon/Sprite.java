@@ -19,7 +19,7 @@ import com.stickycoding.Rokon.Handlers.CollisionHandler;
  * @author Richard
  */
 public class Sprite extends DynamicObject {
-	public static final int MAX_COLLIDERS = 0;
+	public static final int MAX_COLLIDERS = 1;
 	public static final int MAX_MODIFIERS = 5;
 	
 	private int i, j, k, r;
@@ -692,6 +692,22 @@ public class Sprite extends DynamicObject {
 		return _animating;
 	}
 	
+	/**
+	 * @return compareTo implementation (used on Grid and Container)
+	 */
+	public int compareTo(Sprite sprite) throws ClassCastException {
+	   if (!(sprite instanceof Sprite))
+	     throw new ClassCastException("A Sprite object expected.");
+	   if (hashCode() == sprite.hashCode()) 
+		   i = 0; 
+	   else if (hashCode() > sprite.hashCode())
+		   i = +1;
+	   else if (hashCode() < sprite.hashCode())
+		   i = -1; 
+//	   Debug.print("compare "+i+" hashCode "+hashCode()+" sprite.hashCode "+sprite.hashCode()); 
+	   return i;    
+	}
+
 	/**
 	 * Removes all SpriteModifier's from the Sprite
 	 */
