@@ -33,7 +33,8 @@ public class Launcher extends ListActivity {
 			"Post Processing",
 			"Parallax Background",
 			"Polygon Collision",
-			"Grid Control"
+			"Grid Control",
+			"Layer Control"
 		};
 		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, examples));
 	}
@@ -125,6 +126,10 @@ public class Launcher extends ListActivity {
 				break;
 			case 20: // Grid Control
 				intent = new Intent(this, Example21.class);
+				startActivity(intent);
+				break;
+			case 21: // Layer Control
+				intent = new Intent(this, Example22.class);
 				startActivity(intent);
 				break;
 		}

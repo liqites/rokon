@@ -5,12 +5,11 @@ package com.stickycoding.Rokon;
  * @author Jeremy
  */
 
-public class LayerContainer {
+public class SceneLayerContainer {
 
 	private Sprite _sprite;
-	private int _x, _y; 
 
-	public LayerContainer(Sprite sprite)
+	public SceneLayerContainer(Sprite sprite)
 	{
 		_sprite = sprite;
 	}

@@ -35,14 +35,10 @@ public class Grid {
 		_rows = rows;
 		_gridWidth = _cols * _caseWidth;
 		_gridHeight = _rows * _caseHeight;
-		moveGrid(_x, _y);
+		moveXY(_x, _y);
 	}
 
-	// Todo
-	public void gridCreate(int caseWidth, int caseHeight, int cols, int rows, int alpha, int visible) {
-	}
-	
-	public void moveGrid(int x, int y) {
+	public void moveXY(int x, int y) {
 	    int i = 0;
 	    int j = _gridContainer.size();
 	    while (i < j) {
@@ -54,6 +50,34 @@ public class Grid {
 	    }
 		_x = x;
 		_y = y;
+	}
+
+	public void moveX(int x) {
+	    int i = 0;
+	    int j = _gridContainer.size();
+	    while (i < j) {
+	    	_gridContainer.get(i).getSprite().setX(_gridContainer.get(i).getSprite().getX() + (x - _x));
+	    	i++;
+	    }
+		_x = x;
+	}
+
+	public void moveY(int y) {
+	    int i = 0;
+	    int j = _gridContainer.size();
+	    while (i < j) {
+	    	_gridContainer.get(i).getSprite().setY(_gridContainer.get(i).getSprite().getY() + (y - _y));
+	    	i++;
+	    }
+		_y = y;
+	}
+	
+	// Todo
+	public void gridCreate(int color, int alpha, int visible) {
+	}
+
+	// Todo
+	public void gridModify(int color, int alpha, int visible) {
 	}
 	
 	// Todo
@@ -80,6 +104,7 @@ public class Grid {
 	public void smoothMoveOnGrid(Sprite sprite, int casePosX, int casePosY, int duration) {
 	}
 
+	// Todo Align/V-Align
 	public void moveOnGrid(Sprite sprite, int casePosX, int casePosY) {
 		int _convCasePosX = _x + (casePosX * _caseWidth); 
 		int _convCasePosY = _y + (casePosY * _caseHeight);

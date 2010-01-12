@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class SceneLayer {
 
 	private int [] _layerResult;
-	ArrayList<LayerContainer> _layerContainer = new ArrayList<LayerContainer>();
+	ArrayList<SceneLayerContainer> _sceneLayerContainer = new ArrayList<SceneLayerContainer>();
 	private int _x, _y;
 
 	public SceneLayer() {
@@ -23,17 +23,37 @@ public class SceneLayer {
 		_y = y;
 	}
 
-	public void moveLayer(int x, int y) {
+	public void moveXY(int x, int y) {
 	    int i = 0;
-	    int j = _layerContainer.size();
+	    int j = _sceneLayerContainer.size();
 	    while (i < j) {
-	    	_layerContainer.get(i).getSprite().setXY(
-	    			(_layerContainer.get(i).getSprite().getX() + (x - _x)),
-	    			(_layerContainer.get(i).getSprite().getY() + (y - _y))
+	    	_sceneLayerContainer.get(i).getSprite().setXY(
+	    			(_sceneLayerContainer.get(i).getSprite().getX() + (x - _x)),
+	    			(_sceneLayerContainer.get(i).getSprite().getY() + (y - _y))
 	    			);
 	    	i++;
 	    }
 		_x = x;
+		_y = y;
+	}
+
+	public void moveX(int x) {
+	    int i = 0;
+	    int j = _sceneLayerContainer.size();
+	    while (i < j) {
+	    	_sceneLayerContainer.get(i).getSprite().setX(_sceneLayerContainer.get(i).getSprite().getX() + (x - _x));
+	    	i++;
+	    }
+		_x = x;
+	}
+
+	public void moveY(int y) {
+	    int i = 0;
+	    int j = _sceneLayerContainer.size();
+	    while (i < j) {
+	    	_sceneLayerContainer.get(i).getSprite().setY(_sceneLayerContainer.get(i).getSprite().getY() + (y - _y));
+	    	i++;
+	    }
 		_y = y;
 	}
 	
@@ -74,18 +94,18 @@ public class SceneLayer {
 		return _y;
 	}
 
-	public ArrayList<LayerContainer> getContainer() {
-		return _layerContainer;
+	public ArrayList<SceneLayerContainer> getContainer() {
+		return _sceneLayerContainer;
 	}
 	
 	public int spriteBinarySearch(Sprite sprite) {
 	    int first = 0;
-	    int last  = _layerContainer.size();
+	    int last  = _sceneLayerContainer.size();
 	    while (first < last) {
 	        int mid = (first + last) / 2;
-	        if (sprite.compareTo(_layerContainer.get(mid).getSprite()) < 0) {
+	        if (sprite.compareTo(_sceneLayerContainer.get(mid).getSprite()) < 0) {
 	            last = mid;
-	        } else if (sprite.compareTo(_layerContainer.get(mid).getSprite()) > 0) {
+	        } else if (sprite.compareTo(_sceneLayerContainer.get(mid).getSprite()) > 0) {
 	            first = mid + 1;
 	        } else {
 	            return mid;
@@ -94,22 +114,22 @@ public class SceneLayer {
 	    return -1;
 	}
 
-    public static void layerSort( ArrayList<LayerContainer> layerContainer ) {
-        for( int i = 1; i < layerContainer.size(); i++ ) {
-        	LayerContainer tmpContainer = layerContainer.get(i);
-        	Sprite tmpSprite = layerContainer.get(i).getSprite();
+    public static void layerSort( ArrayList<SceneLayerContainer> sceneLayerContainer ) {
+        for( int i = 1; i < sceneLayerContainer.size(); i++ ) {
+        	SceneLayerContainer tmpContainer = sceneLayerContainer.get(i);
+        	Sprite tmpSprite = sceneLayerContainer.get(i).getSprite();
             int j = i;
 
-            for( ; j > 0 && tmpSprite.compareTo( layerContainer.get(j - 1).getSprite() ) < 0; j-- ) {
-            	layerContainer.set(j, layerContainer.get(j - 1));
+            for( ; j > 0 && tmpSprite.compareTo( sceneLayerContainer.get(j - 1).getSprite() ) < 0; j-- ) {
+            	sceneLayerContainer.set(j, sceneLayerContainer.get(j - 1));
             }
-            layerContainer.set(j, tmpContainer);
+            sceneLayerContainer.set(j, tmpContainer);
         }
     }
 
     public void magnetize(Sprite sprite) {
-		_layerContainer.add(new LayerContainer(sprite));
-		layerSort(_layerContainer);
+		_sceneLayerContainer.add(new SceneLayerContainer(sprite));
+		layerSort(_sceneLayerContainer);
 	}
 
 }

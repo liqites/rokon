@@ -4,7 +4,7 @@
  * Grid has 3 level
  * Grid
  *  |
- *  - Container
+ *  - GridContainer
  *       |
  *       - Sprite
  *       
@@ -12,11 +12,9 @@
  * 
  * Grid(Cols Width, Rows Height, Number of Cols, Number of Rows[, Pos X, Pos Y])
  *   
- * Grid allow you to stuck some Sprites on them like a sprites layer and to position them in a grid
+ * Grid allow you to lock some Sprites together like Scenelayer and to position them in a grid
  *       
- * Container class :
- * 
- * Container is an ArrayList automatically created when you create à grid,
+ * GridContainer is an ArrayList automatically created when you create à grid,
  * it contain sprites with their coordinates in the grid (Colon and Row)
  * it's useful if you want to know what sprites are in the grid and their location
  * they are sorted by sprites hashCodes
@@ -139,7 +137,7 @@ public class Example21 extends RokonActivity {
 		if (y > 225) { sensY = -1; } else if (testGrid1.getY() < 150) { sensY = 1; }
 		if (sensX > 0) { x += 2; } else { x -= 2; }
 		if (sensY > 0) { y += 2; } else { y -= 2; }
-		testGrid1.moveGrid(x, y);
+		testGrid1.moveXY(x, y);
 		
 		//
 		// Example 2 : move sprites on the grid.
