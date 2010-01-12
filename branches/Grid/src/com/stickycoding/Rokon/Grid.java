@@ -2,7 +2,7 @@ package com.stickycoding.Rokon;
 
 import java.util.ArrayList;
 import com.stickycoding.Rokon.Sprite;
-import com.stickycoding.Rokon.Container;
+import com.stickycoding.Rokon.GridContainer;
 
 /**
  * Grid Control Implementation
@@ -12,7 +12,7 @@ import com.stickycoding.Rokon.Container;
 public class Grid {
 
 	private int [] _gridResult;
-	ArrayList<Container> _gridContainer = new ArrayList<Container>();
+	ArrayList<GridContainer> _gridContainer = new ArrayList<GridContainer>();
 	private int _gridWidth, _gridHeight, _cols, _rows, _caseWidth, _caseHeight, _x, _y;
 
 	public Grid(int caseWidth, int caseHeight, int cols, int rows) {
@@ -39,7 +39,7 @@ public class Grid {
 	}
 
 	// Todo
-	public void gridCreate(int caseWidth, int caseHeight, int cols, int rows, int x, int y) {
+	public void gridCreate(int caseWidth, int caseHeight, int cols, int rows, int alpha, int visible) {
 	}
 	
 	public void moveGrid(int x, int y) {
@@ -57,11 +57,23 @@ public class Grid {
 	}
 	
 	// Todo
-	public void rotateGrid() {
+	public void gridScaleX(int x, int withSprite) {
 	}
 
 	// Todo
-	public void relativeRotateGrid() {
+	public void gridScaleY(int y) {
+	}
+	
+	// Todo
+	public void gridScaleXY(int x, int y) {
+	}
+
+	// Todo
+	public void rotateGrid(int degree) {
+	}
+
+	// Todo
+	public void relativeRotateGrid(int x, int y, int degree) {
 	}
 
 	// Todo
@@ -74,7 +86,7 @@ public class Grid {
 		sprite.setXY(_convCasePosX,_convCasePosY);
 		int _search = spriteBinarySearch(sprite);
 		if (_search >= 0) {
-			_gridContainer.set(_search, new Container(sprite,casePosX,casePosY));
+			_gridContainer.set(_search, new GridContainer(sprite,casePosX,casePosY));
 		}
 	}
 
@@ -144,7 +156,7 @@ public class Grid {
 		return _gridContainer.get(_search).getRow();
 	}
 
-	public ArrayList<Container> getContainer() {
+	public ArrayList<GridContainer> getContainer() {
 		return _gridContainer;
 	}
 	
@@ -164,21 +176,21 @@ public class Grid {
 	    return -1;
 	}
 
-    public static void gridSort( ArrayList<Container> container ) {
-        for( int i = 1; i < container.size(); i++ ) {
-        	Container tmpContainer = container.get(i);
-        	Sprite tmpSprite = container.get(i).getSprite();
+    public static void gridSort( ArrayList<GridContainer> gridContainer ) {
+        for( int i = 1; i < gridContainer.size(); i++ ) {
+        	GridContainer tmpContainer = gridContainer.get(i);
+        	Sprite tmpSprite = gridContainer.get(i).getSprite();
             int j = i;
 
-            for( ; j > 0 && tmpSprite.compareTo( container.get(j - 1).getSprite() ) < 0; j-- ) {
-            	container.set(j, container.get(j - 1));
+            for( ; j > 0 && tmpSprite.compareTo( gridContainer.get(j - 1).getSprite() ) < 0; j-- ) {
+            	gridContainer.set(j, gridContainer.get(j - 1));
             }
-            container.set(j, tmpContainer);
+            gridContainer.set(j, tmpContainer);
         }
     }
 
     public void magnetize(Sprite sprite, int casePosX, int casePosY) {
-		_gridContainer.add(new Container(sprite,casePosY,casePosY));
+		_gridContainer.add(new GridContainer(sprite,casePosY,casePosY));
 		gridSort(_gridContainer);
 		moveOnGrid(sprite, casePosX, casePosY);
 	}
