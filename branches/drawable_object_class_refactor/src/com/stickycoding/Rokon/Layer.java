@@ -8,11 +8,11 @@ import javax.microedition.khronos.opengles.GL10;
  * @author Richard
  */
 public class Layer {
-	public static final int MAX_SPRITES = 60;
+	public static final int MAX_SPRITES = 85;
 	public static final int MAX_TEXTS = 80;
 	public static final int MAX_EMITTERS = 10;
 	
-	private Sprite[] spriteArr = new Sprite[MAX_SPRITES];
+	private FastDrawableObject[] spriteArr = new DrawableObject[MAX_SPRITES];
 	private Emitter[] emitterArr = new Emitter[MAX_EMITTERS];
 	private Text[] textArr = new Text[MAX_TEXTS];
 	private int i, j, k, l, m, n, o, p, q;
@@ -47,14 +47,14 @@ public class Layer {
 	/**
 	 * @param sprite removes a Sprite object from the layer
 	 */
-	public void removeSprite(Sprite sprite) {
+	public void removeSprite(FastDrawableObject sprite) {
 		sprite.markForRemoval();
 	}
 
 	/**
 	 * @param sprite adds a Sprite object to the layer
 	 */
-	public void addSprite(Sprite sprite) {
+	public void addSprite(FastDrawableObject sprite) {
 		k = -1;
 		for(l = 0; l < MAX_SPRITES; l++)
 			if(spriteArr[l] == null)

@@ -12,6 +12,18 @@ import android.os.Build;
 public class VertexBuffer {
 
 	public ByteBuffer buffer;
+	
+	public VertexBuffer() {
+		if(Build.VERSION.SDK == "3")
+			buffer = ByteBuffer.allocate(8*4);
+		else
+			buffer = ByteBuffer.allocateDirect(8*4);
+		buffer.order(ByteOrder.nativeOrder());
+	}
+	
+	public ByteBuffer get() {
+		return buffer;
+	}
 
 	/**
 	 * Creates the ByteBuffer object and sets up with initial coordinates

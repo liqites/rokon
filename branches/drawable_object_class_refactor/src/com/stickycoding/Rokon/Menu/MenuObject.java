@@ -15,6 +15,7 @@ import com.stickycoding.Rokon.SpriteModifiers.SlideIn;
 public class MenuObject {
 
 	private static final int TOUCH_THRESHOLD_TIME = 100;
+
 	
 	private Menu _menu;
 	private Sprite _sprite;

@@ -10,82 +10,115 @@ import android.os.Build;
  * @author Richard
  */
 public class TextureBuffer {
+
+	public static final int NORMAL = 0, DRAWTEX = 1, VBO = 2;
+	private int _drawType;
 	
+	private float[] _floatBuffer;
 	private ByteBuffer _buffer;
 	private Texture _texture;
-	private int _clipLeft = 0, _clipRight = 0, _clipTop = 0, _clipBottom = 0;
+	private float _clipLeft = 0, _clipRight = 0, _clipTop = 0, _clipBottom = 0;
 	private int _tileX, _tileY;
-	 
-	public TextureBuffer(Texture texture) {
+	
+	public TextureBuffer(Texture texture, int drawType) {
+		_drawType = drawType;
 		_texture = texture;
-		if(Build.VERSION.SDK == "3")
-			_buffer = ByteBuffer.allocate(8*4);
-		else
-			_buffer = ByteBuffer.allocateDirect(8*4);
-		_buffer.order(ByteOrder.nativeOrder());
-		_tileX = 1;
-		_tileY = 1;
-		update();
+		switch(drawType) {
+			case NORMAL:
+				if(Build.VERSION.SDK == "3")
+					_buffer = ByteBuffer.allocate(8*4);
+				else
+					_buffer = ByteBuffer.allocateDirect(8*4);
+				_buffer.order(ByteOrder.nativeOrder());
+				break;
+			case DRAWTEX:
+				_floatBuffer = new float[4];
+				break;
+			case VBO:
+				break;
+		}
 	}
 	
-	public TextureBuffer(Texture texture, int tileIndex) {
+	public TextureBuffer(Texture texture) {
+		this(texture, Constants.DEFAULT_DRAW_TYPE);
+	}
+	
+	public TextureBuffer() {
+		this(null, Constants.DEFAULT_DRAW_TYPE);
+	}
+	
+	public void setTexture(Texture texture) {
 		_texture = texture;
-		if(Build.VERSION.SDK == "3")
-			_buffer = ByteBuffer.allocate(8*4);
-		else
-			_buffer = ByteBuffer.allocateDirect(8*4);
-		_buffer.order(ByteOrder.nativeOrder());
+		_tileX = 1;
+		_tileY = 1;
+	}
+	
+	public void setTileIndex(int tileIndex) {
 		tileIndex -= 1;
 		_tileX = (tileIndex % _texture.getTileColumnCount()) + 1;
 		_tileY = ((tileIndex - (_tileX - 1)) / _texture.getTileColumnCount()) + 1;
-		update();
+	}
+
+	public void setTile(int tileX, int tileY) {
+		_tileX = tileX;
+		_tileY = tileY;
 	}
 	
 	public ByteBuffer getBuffer() {
 		return _buffer;
 	}
 	
-	public void clip(int left, int top, int right, int bottom) {
+	public float[] getFloatBuffer() {
+		return _floatBuffer;
+	}
+	
+	public void clip(float left, float right, float top, float bottom) {
         _clipLeft = left;
         _clipTop = top;
         _clipRight = right;
         _clipBottom = bottom;
-        update();
-}
+	}
 	
 	public Texture getTexture() {
 		return _texture;
 	}
 	
-	private float _x1, _y1, _x2, _y2, xs, ys;
+	private int _x1, _y1, _x2, _y2, xs, ys;
 	public void update() {
-		if(_texture.getTextureAtlas() == null)
+		if(_texture == null || _texture.getTextureAtlas() == null)
 			return;
-
-		_x1 = _texture.getAtlasX();
-		_y1 = _texture.getAtlasY();
-		_x2 = _texture.getAtlasX() + _texture.getWidth();
-		_y2 = _texture.getAtlasY() + _texture.getHeight();
 		
-		xs = (_x2 - _x1) / _texture.getTileColumnCount();
-		ys = (_y2 - _y1) / _texture.getTileRowCount();
-
-		_x1 = _texture.getAtlasX() + (xs * (_tileX - 1)) + _clipLeft;
-		_y1 = _texture.getAtlasY() + (ys * (_tileY - 1)) + _clipTop;
-		_x2 = _texture.getAtlasX() + (xs * (_tileX - 1)) + xs - _clipBottom; 
-		_y2 = _texture.getAtlasY() + (ys * (_tileY - 1)) + ys - _clipRight;
-
-		_x1 = _x1 / _texture.getTextureAtlas().getWidth();
-		_y1 = _y1 / _texture.getTextureAtlas().getHeight();
-		_x2 = _x2 / _texture.getTextureAtlas().getWidth();
-		_y2 = _y2 / _texture.getTextureAtlas().getHeight();
-
-		_buffer.position(0);		
-		_buffer.putFloat(_x1); _buffer.putFloat(_y1);
-		_buffer.putFloat(_x2); _buffer.putFloat(_y1);
-		_buffer.putFloat(_x1); _buffer.putFloat(_y2);
-		_buffer.putFloat(_x2); _buffer.putFloat(_y2);		
-		_buffer.position(0);
+		switch(_drawType) {
+			case NORMAL:	
+				_x1 = _texture.getAtlasX();
+				_y1 = _texture.getAtlasY();
+				_x2 = _texture.getAtlasX() + _texture.getWidth();
+				_y2 = _texture.getAtlasY() + _texture.getHeight();
+				
+				xs = (_x2 - _x1) / _texture.getTileColumnCount();
+				ys = (_y2 - _y1) / _texture.getTileRowCount();
+	
+				_x1 = _texture.getAtlasX() + (xs * (_tileX - 1));
+				_y1 = _texture.getAtlasY() + (ys * (_tileY - 1));
+				_x2 = _texture.getAtlasX() + (xs * (_tileX - 1)) + xs; 
+				_y2 = _texture.getAtlasY() + (ys * (_tileY - 1)) + ys;
+	
+				_buffer.position(0);		
+				_buffer.putFloat(_x1); _buffer.putFloat(_y1);
+				_buffer.putFloat(_x2); _buffer.putFloat(_y1);
+				_buffer.putFloat(_x1); _buffer.putFloat(_y2);
+				_buffer.putFloat(_x2); _buffer.putFloat(_y2);		
+				_buffer.position(0);
+				break;
+			case DRAWTEX:
+				_floatBuffer[0] = getTexture().getAtlasX();
+				_floatBuffer[1] = getTexture().getAtlasY() + getTexture().getHeight();
+				_floatBuffer[2] = getTexture().getWidth();
+				_floatBuffer[3] = - getTexture().getHeight();
+				break;
+			case VBO:
+				break;
+		}
 	}
 
 }

@@ -1,15 +1,7 @@
 package com.stickycoding.Rokon;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11Ext;
-
-import android.os.Build;
-
-import com.stickycoding.Rokon.Handlers.AnimationHandler;
-import com.stickycoding.Rokon.Handlers.CollisionHandler;
 
 
 /**
@@ -18,7 +10,7 @@ import com.stickycoding.Rokon.Handlers.CollisionHandler;
  *
  * @author Richard
  */
-public class BasicSprite extends TexturedObject {
+public class FastSprite extends FastTexturedObject {
 
 	private boolean _visible;
 	
@@ -27,13 +19,11 @@ public class BasicSprite extends TexturedObject {
 	private float _blue;
 	private float _alpha;
 	
-	public int intVar1, intVar2, intVar3;
-	
-	public BasicSprite(float x, float y, float width, float height) {
+	public FastSprite(float x, float y, float width, float height) {
 		this(x, y, width, height, null);
 	}
 		
-	public BasicSprite(float x, float y, float width, float height, Texture texture) {
+	public FastSprite(float x, float y, float width, float height, Texture texture) {
 		super(x, y, width, height, texture);
 		_red = 1;
 		_green = 1;
@@ -45,14 +35,14 @@ public class BasicSprite extends TexturedObject {
 		onUpdate();
 	}
 	
-	public BasicSprite(float x, float y, Texture texture) {
+	public FastSprite(float x, float y, Texture texture) {
 		this(x, y, 0, 0, texture);
 		setWidth(texture.getWidth() / texture.getTileColumnCount(), true);
 		setHeight(texture.getHeight() / texture.getTileRowCount(), true);
 		onUpdate();
 	}
 	
-	public BasicSprite(Texture texture) {
+	public FastSprite(Texture texture) {
 		this(0, 0, 0, 0, texture);
 		setWidth(texture.getWidth() / texture.getTileColumnCount(), true);
 		setHeight(texture.getHeight() / texture.getTileRowCount(), true);
@@ -209,55 +199,59 @@ public class BasicSprite extends TexturedObject {
 	 * Draws the Sprite to the OpenGL object, should be no need to call this
 	 * @param gl
 	 */
-	private boolean hasTexture;
+	
+	GL11Ext gl11;
+	float drawX, drawY, drawWidth, drawHeight;
 	public void drawFrame(GL10 gl) {
+		
 		if(!_visible)
 			return;
 		
-		if(notOnScreen())
+		if(_clipLeft >= 1 || _clipRight >= 1 || _clipTop >= 1 && _clipBottom >= 1)
 			return;
 		
-		if(getTexture() == null)
-			hasTexture = false;
-		else
-			hasTexture = true;
-		
-		if(!hasTexture) {
-			gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-			gl.glDisable(GL10.GL_TEXTURE_2D);
-		} else {
+		gl11 = (GL11Ext)gl;
+
+		if(getTexture() != null)
 			getTexture().select(gl);
-		}
 		
-		gl.glLoadIdentity();
-		gl.glVertexPointer(2, GL10.GL_FLOAT, 0, getVertexBuffer());
-
-		if(getRotation() != 0) {
-			if (getRotationPivotRelative()) {
-				gl.glTranslatef(getX() + (getScaleX() * getRotationPivotX()), getY() + (getScaleY() * getRotationPivotY()), 0);
-				gl.glRotatef(getRotation(), 0, 0, 1);
-				gl.glTranslatef(-1 * (getX() + (getScaleX() * getRotationPivotX())), -1 * (getY() + (getScaleY() * getRotationPivotY())), 0);
-			} else {
-				gl.glTranslatef(getRotationPivotX(), getRotationPivotY(), 0);
-				gl.glRotatef(getRotation(), 0, 0, 1);
-				gl.glTranslatef(-1 * getRotationPivotX(), -1 * getRotationPivotY(), 0);
-			}
-		}
-
-		gl.glColor4f(_red, _green, _blue, _alpha);
-		if(hasTexture)
-			gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, getTextureBuffer().getBuffer());	
-
-		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
 		
-		//((GL11Ext)gl).glTexParameterfv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, getTextureBuffer().getFloatBuffer(), 0);
-		//((GL11Ext)gl).glDrawTexiOES((int)(getX() + getOffsetX()), (int)(getY() + getOffsetY()), 0, (int)(getWidth() * getScaleX()), (int)(getHeight() * getScaleY()));
-		//((GL11Ext)gl).glDrawTexiOES(5, Rokon.screenHeight - 5, 0, 100, 100);
+		GLHelper.glColor4f(gl, _red, _green, _blue, _alpha);
+		GLHelper.drawTexCrop(gl11, getTextureBuffer().getFloatBuffer());
 		
-		if(!hasTexture) {
-			gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
-			gl.glEnable(GL10.GL_TEXTURE_2D);
-		}
+		//gl11.glDrawTexiOES(roundUp(Rokon.toScreenX(getX() + getOffsetX() + ((getWidth() * getScaleX()) * _clipLeft))), roundUp(Rokon.toScreenY(getY() + getOffsetY() + (getHeight() * getScaleY() * _clipTop)) - Rokon.convertToScreenY((getHeight() * getScaleY()) - (getHeight() * getScaleY() * _clipBottom) - (getHeight() * getScaleY() * _clipTop)   )), 0, roundUp(Rokon.toScreenX(getWidth() * getScaleX() - ((getWidth() + getScaleX()) * _clipRight) - ((getWidth() + getScaleX()) * _clipLeft))), roundUp(Rokon.convertToScreenY(getHeight() * getScaleY() - (getHeight() * getScaleY() * _clipBottom) - (getHeight() * getScaleY() * _clipTop) )));
+		gl11.glDrawTexfOES(drawX, Rokon.screenHeight - drawY - drawHeight, 0, drawWidth, drawHeight);
+	}
+	
+	public int roundUp(float val) {
+		//return (int)(Math.ceil(val));
+		return (int)val;
+	}
+	
+	private float _clipLeft = 0, _clipRight = 0, _clipTop = 0, _clipBottom = 0;
+	public void setClip(float left, float right, float top, float bottom) {
+		_clipLeft = left;
+		_clipRight = right;
+		_clipTop = top;
+		_clipBottom = bottom;
+		if(_clipLeft < 0)
+			_clipLeft = 0;
+		if(_clipLeft > 1)
+			_clipLeft = 1;
+		if(_clipRight < 0)
+			_clipRight = 0;
+		if(_clipRight > 1)
+			_clipRight = 1;
+		if(_clipBottom < 0)
+			_clipBottom = 0;
+		if(_clipBottom > 1)
+			_clipBottom = 1;
+		if(_clipTop < 0)
+			_clipTop = 0;
+		if(_clipTop > 1)
+			_clipTop = 1;
+		getTextureBuffer().clip(left, right, top, bottom);
+		onUpdate();
 	}
 	
 	/**
@@ -290,5 +284,17 @@ public class BasicSprite extends TexturedObject {
 		stop();
 		if(resetTexture)
 			setTileIndex(1);
+	}
+	
+
+	protected void onUpdate() {
+		//super.onUpdate();
+		drawX = roundUp(Rokon.toScreenX(getX() + getOffsetX() + ((getWidth() * getScaleX()) * _clipLeft)));
+		drawY = roundUp(Rokon.toScreenY(getY() + getOffsetY() + ((getHeight() * getScaleY()) * _clipTop)));
+		drawWidth = roundUp(Rokon.toScreenX((getWidth() * getScaleX()) - (getWidth() * getScaleX() * _clipRight) - (getWidth() * getScaleX() * _clipLeft)));
+		drawHeight = roundUp(Rokon.toScreenY((getHeight() * getScaleY()) - (getHeight() * getScaleY() * _clipBottom) - (getHeight() * getScaleY() * _clipTop)));
+		if(_clipRight != 0)
+			Debug.print("clip right = " + _clipRight + " dw=" + drawWidth);
+		
 	}
 }

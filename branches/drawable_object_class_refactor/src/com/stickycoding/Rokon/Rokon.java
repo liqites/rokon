@@ -22,11 +22,11 @@ import com.stickycoding.Rokon.OpenGL.RokonSurfaceView;
  * 
  * See LICENSE for information about copyright.
  * 
- * This engine was built to be open source, you arefree to use this in your projects,
+ * This engine was built to be open source, you are free to use this in your projects,
  * commercial or otherwise, as you wish. If you make any improvements, please send them 
  * on to me so everybody can benefit from them.
  * 
- * Please report any bugs through the Issue tracker on google projects
+ * Please report any bugs through the Issue tracker on Google Projects
  * 
  * http://code.google.com/p/rokon/
  * http://stickycoding.com/rokon/
@@ -35,7 +35,7 @@ import com.stickycoding.Rokon.OpenGL.RokonSurfaceView;
  * working on this worthwhile!
  */
 public class Rokon {
-	public static int MAX_HOTSPOTS = 25;
+	public static int MAX_HOTSPOTS = 5;
 	public static int MAX_LAYERS = 16;
 	
 	private Vibrator _vibrator;
@@ -88,6 +88,9 @@ public class Rokon {
 	private boolean _forceTextureRefresh = false;
 	private boolean _freezeUntilTexturesReloaded = false;
 	private boolean _forceOffscreenRender = false;
+	
+	public static float timeModifier;
+	public static long previousTime;
 	
 	private Menu _menu = null;
 	
@@ -511,8 +514,12 @@ public class Rokon {
 			if(_freezeUntilTexturesReloaded)
 				return;
 			
+			previousTime = time;
+			
 			if(!_paused)
 				time = System.currentTimeMillis() - _pauseTime;
+			
+			timeModifier = (time - previousTime) / 1000f;
 			
 			realTime = System.currentTimeMillis();
 			
@@ -582,7 +589,7 @@ public class Rokon {
 	 * Adds a sprite to the bottom Layer (zero)
 	 * @param sprite
 	 */
-	public void addSprite(Sprite sprite) {
+	public void addSprite(FastDrawableObject sprite) {
 		getLayer(0).addSprite(sprite);
 	}
 	
@@ -591,7 +598,7 @@ public class Rokon {
 	 * @param sprite
 	 * @param layer
 	 */
-	public void addSprite(Sprite sprite, int layer) {
+	public void addSprite(FastDrawableObject sprite, int layer) {
 		getLayer(layer).addSprite(sprite);
 	}
 	
@@ -600,7 +607,7 @@ public class Rokon {
 	 * @param sprite
 	 * @param layer
 	 */
-	public void removeSprite(Sprite sprite, int layer) {
+	public void removeSprite(FastDrawableObject sprite, int layer) {
 		getLayer(layer).removeSprite(sprite);
 	}
 	
@@ -608,7 +615,7 @@ public class Rokon {
 	 * Removes a sprite from the bottom Layer (zero)
 	 * @param sprite
 	 */
-	public void removeSprite(Sprite sprite) {
+	public void removeSprite(FastDrawableObject sprite) {
 		getLayer(0).removeSprite(sprite);
 	}
 	
@@ -911,6 +918,14 @@ public class Rokon {
              getInputHandler().onTouchEvent(_newTouchX, _newTouchY, hit);
              getInputHandler().onTouchEvent(_newTouchX, _newTouchY, event.getAction(), hit);
 		 }
+	}
+	
+	public static float toScreenX(float x) {
+		return x * ((float)screenWidth / (float)fixedWidth);
+	}
+	
+	public static float toScreenY(float y) {
+		return (y * ((float)screenHeight / (float)fixedHeight));
 	}
 	
 }

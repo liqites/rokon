@@ -4,7 +4,7 @@ package com.stickycoding.Rokon;
  * @author Richard
  * A geometric shape, basic on a Polygon, that has real coordinates and dimensions
  */
-public class Shape extends DynamicObject {
+public class Shape extends DrawableObject {
 	
 	private Polygon _polygon;
 	

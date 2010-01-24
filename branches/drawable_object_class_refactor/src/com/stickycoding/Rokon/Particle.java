@@ -137,4 +137,8 @@ public class Particle extends DynamicObject {
 		_deathTime = deathTime;
 	}
 	
+	protected void onUpdate() {
+		
+	}
+	
 }

@@ -11,7 +11,7 @@ public class TextureOptions {
 	public int magFilter, minFilter, texEnv;
 	
 	public TextureOptions() {
-		magFilter = GL10.GL_NEAREST;
+		magFilter = GL10.GL_NEAREST_MIPMAP_NEAREST;
 		minFilter = GL10.GL_NEAREST;
 		texEnv = GL10.GL_MODULATE;
 	}

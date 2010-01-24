@@ -153,7 +153,7 @@ public class TextureAtlas {
 			if(_texture[i] == null) {
 				for(j = 0; j <= _width - texture.getWidth(); j++)
 					for(k = 0; k <= _height - texture.getHeight(); k++) {
-						if((_tempTexture = textureAt(j, k)) == null)
+						if((_tempTexture = textureAt(j, k)) == null) {
 							if(j + texture.getWidth() <= _width && k + texture.getHeight() <= _height) {
 								_texture[i] = texture;
 								_texture[i].setAtlasX(j);
@@ -161,6 +161,9 @@ public class TextureAtlas {
 								_texture[i].setTextureAtlas(this);
 								return;
 							}
+						} else {
+							k = _tempTexture.getAtlasY() + _tempTexture.getHeight();
+						}
 					}
 				Debug.warning("TextureAtlas appears to have no room for your Texture?!");
 				return;
