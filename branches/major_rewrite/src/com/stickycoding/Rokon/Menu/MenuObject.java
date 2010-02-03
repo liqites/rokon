@@ -1,12 +1,11 @@
 package com.stickycoding.Rokon.Menu;
 
+import com.stickycoding.Rokon.Entity;
 import com.stickycoding.Rokon.Hotspot;
 import com.stickycoding.Rokon.Rokon;
-import com.stickycoding.Rokon.Sprite;
 import com.stickycoding.Rokon.Texture;
 import com.stickycoding.Rokon.SpriteModifiers.Fade;
 import com.stickycoding.Rokon.SpriteModifiers.FadeTo;
-import com.stickycoding.Rokon.SpriteModifiers.SlideIn;
 
 /**
  * The extendable class for which all objects added to Menu's are made from. Has a Sprite, Texture and Hotspot, the rest is done by extensions.
@@ -18,7 +17,7 @@ public class MenuObject {
 
 	
 	private Menu _menu;
-	private Sprite _sprite;
+	private Entity _entity;
 	private Texture _texture;
 	private Hotspot _hotspot;
 	private boolean _depressed;
@@ -64,36 +63,40 @@ public class MenuObject {
 	public MenuObject(int id, int x, int y, Texture texture, boolean createHotspot) {
 		_id = id;
 		_texture = texture;
-		_sprite = new Sprite(x, y, texture);
+		_entity = new Entity(x, y, texture);
 		if(createHotspot)
-			_hotspot = new Hotspot(_sprite);
+			_hotspot = new Hotspot(_entity);
 	}
 	
 	public MenuObject(int id, int x, int y, int width, int height) {
 		_id = id;
-		_sprite = new Sprite(x, y, width, height);
-		_sprite.setAlpha(0);
-		_hotspot = new Hotspot(_sprite);
+		_entity = new Entity(x, y, width, height);
+		_entity.setAlpha(0);
+		_hotspot = new Hotspot(_entity);
 	}
 	
 	public MenuObject(int id, int x, int y, int width, int height, Texture texture, boolean createHotspot) {
 		_id = id;
-		_sprite = new Sprite(x, y, width, height, texture);
+		_entity = new Entity(x, y, width, height, texture);
 		_texture = texture;
 		if(createHotspot)
-			_hotspot = new Hotspot(_sprite);
+			_hotspot = new Hotspot(_entity);
 	}
 	
 	public void addToScene(Rokon rokon, Menu menu) {
 		_menu = menu;
-		if(_sprite != null)
-			rokon.addSprite(_sprite, MenuLayers.LAYER_1);
+		//if(_sprite != null)
+		//	rokon.addSprite(_sprite, MenuLayers.LAYER_1);
 		if(_hotspot != null)
 			rokon.addHotspot(_hotspot);
 	}
 	
-	public Sprite getSprite() {
-		return _sprite;
+	public Entity getEntity() {
+		return _entity;
+	}
+	
+	public Entity getSprite() {
+		return _entity;
 	}
 	
 	public Menu getMenu() {
@@ -106,7 +109,7 @@ public class MenuObject {
 
 	public void setTexture(Texture texture) {
 		_texture = texture;
-		_sprite.setTexture(texture);
+		_entity.setTexture(texture);
 	}
 	
 	public void touch(boolean hasActive) {
@@ -132,56 +135,56 @@ public class MenuObject {
 	}
 	
 	public void fadeOut(int time) {
-		_sprite.resetModifiers();
-		_sprite.addModifier(new Fade(time, 1, true));
+		_entity.resetModifiers();
+		_entity.addModifier(new Fade(time, 1, true));
 	}
 	
 	public void slideOutRight(int acceleration) {
-		_sprite.accelerate(acceleration, 0);
+		//_entity.accelerate(acceleration, 0);
 	}
 	
 	public void slideOutLeft(int acceleration) {
-		_sprite.accelerate(-acceleration, 0);
+	//	_entity.accelerate(-acceleration, 0);
 	}
 	
 	public void slideOutDown(int acceleration) {
-		_sprite.accelerate(0, acceleration);
+		//_entity.accelerate(0, acceleration);
 	}
 	
 	public void slideOutUp(int acceleration) {
-		_sprite.accelerate(0, -acceleration);
+		//_entity.accelerate(0, -acceleration);
 	}
 	
 	public void fadeIn(int time) {
-		_sprite.resetModifiers();
-		_sprite.setAlpha(0.0f);
-		_sprite.addModifier(new Fade(time, 1, false));
+		_entity.resetModifiers();
+		_entity.setAlpha(0.0f);
+		_entity.addModifier(new Fade(time, 1, false));
 	}
 	
 	public void fadeIn(int time, float target) {
-		_sprite.resetModifiers();
-		_sprite.setAlpha(0.0f);
-		_sprite.addModifier(new FadeTo(time, target));
+		_entity.resetModifiers();
+		_entity.setAlpha(0.0f);
+		_entity.addModifier(new FadeTo(time, target));
 	}
 	
 	public void slideInRight(int time) {
-		_sprite.reset();
-		_sprite.addModifier(new SlideIn(_sprite, time, SlideIn.RIGHT));
+		_entity.reset();
+		//_entity.addModifier(new SlideIn(_entity, time, SlideIn.RIGHT));
 	}
 	
 	public void slideInBottom(int time) {
-		_sprite.reset();
-		_sprite.addModifier(new SlideIn(_sprite, time, SlideIn.BOTTOM));
+		_entity.reset();
+	//	_entity.addModifier(new SlideIn(_entity, time, SlideIn.BOTTOM));
 	}
 	
 	public void slideInLeft(int time) {
-		_sprite.reset();
-		_sprite.addModifier(new SlideIn(_sprite, time, SlideIn.LEFT));
+		_entity.reset();
+	//	_entity.addModifier(new SlideIn(_entity, time, SlideIn.LEFT));
 	}
 	
 	public void slideInTop(int time) {
-		_sprite.reset();
-		_sprite.addModifier(new SlideIn(_sprite, time, SlideIn.TOP));
+		_entity.reset();
+	//	_entity.addModifier(new SlideIn(_entity, time, SlideIn.TOP));
 	}
 
 }

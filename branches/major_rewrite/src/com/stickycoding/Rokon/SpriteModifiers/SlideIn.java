@@ -1,7 +1,7 @@
 package com.stickycoding.Rokon.SpriteModifiers;
 
+import com.stickycoding.Rokon.Entity;
 import com.stickycoding.Rokon.Rokon;
-import com.stickycoding.Rokon.Sprite;
 import com.stickycoding.Rokon.SpriteModifier;
 
 public class SlideIn extends SpriteModifier {
@@ -20,11 +20,11 @@ public class SlideIn extends SpriteModifier {
 	private float distance;
 	private float timeDiff;
 	
-	public SlideIn(Sprite sprite, long time, int direction) {
+	public SlideIn(Entity sprite, long time, int direction) {
 		this(sprite, time, direction, false);
 	}
 	
-	public SlideIn(Sprite sprite, long time, int direction, boolean relative) {
+	public SlideIn(Entity sprite, long time, int direction, boolean relative) {
 		this.time = time;
 		startTime = Rokon.time;
 		this.direction = direction;
@@ -35,33 +35,33 @@ public class SlideIn extends SpriteModifier {
 			if(relative)
 				startX += destinationX;
 			distance = startX - destinationX;
-			sprite.setX(startX);
+			//sprite.setX(startX);
 		}
 		if(direction == TOP) {
 			startY = 0 - sprite.getHeight();
 			if(relative)
 				startY += destinationY;
 			distance = destinationY - startY;
-			sprite.setY(startY);
+			//sprite.setY(startY);
 		}
 		if(direction == LEFT) {
 			startX = 0 - sprite.getWidth();
 			if(relative)
 				startX += destinationX;
 			distance = destinationX - startX;
-			sprite.setX(startX);
+			//sprite.setX(startX);
 		}
 		if(direction == BOTTOM) {
 			startY = Rokon.getRokon().getHeight();
 			if(relative)
 				startY += destinationY;
 			distance = startY - destinationY;
-			sprite.setY(startY);
+			//sprite.setY(startY);
 		}
 	}
 
-	public void onUpdate(Sprite sprite) {
-		if(Rokon.time > startTime + time) {
+	public void onUpdate(Entity sprite) {
+		/*if(Rokon.time > startTime + time) {
 			sprite.setX(destinationX);
 			setExpired(true);
 			return;
@@ -99,7 +99,7 @@ public class SlideIn extends SpriteModifier {
 				setExpired(true);
 				return;
 			}
-		}
+		}*/
 	}
 	
 }

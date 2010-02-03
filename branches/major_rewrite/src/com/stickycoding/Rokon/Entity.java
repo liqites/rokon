@@ -5,8 +5,7 @@ import javax.microedition.khronos.opengles.GL11Ext;
 
 public class Entity {
 	
-	public static final int NORMAL = 0, DRAWTEX = 1, VBO = 2;
-	
+	public static final int NONE = -1, NORMAL = 0, DRAWTEX = 1, VBO = 2;	
 	private int _drawType;
 	
 	private int _x, _y, _width, _height;
@@ -25,6 +24,8 @@ public class Entity {
 	
 	private int _tileX, _tileY;
 	
+	private boolean _dead;
+	
 	public Entity(int x, int y, int width, int height, Texture texture, int drawType) {
 		_x = x;
 		_y = y;
@@ -32,6 +33,11 @@ public class Entity {
 		_height = height;
 		_texture = texture;
 		_drawType = drawType;
+		_visible = true;
+		_red = 1;
+		_green = 1;
+		_blue = 1;
+		_alpha = 1;
 		if(texture != null) {
 			_hasTexture = true;
 			_textureBuffer = new TextureBuffer(texture, drawType);
@@ -45,6 +51,8 @@ public class Entity {
 				
 				break;
 			case VBO:
+				break;
+			case NONE:
 				break;
 			default:
 				Debug.warning("Entity created with invalid drawType [" + drawType + "]");
@@ -71,6 +79,10 @@ public class Entity {
 		this(x, y, texture.getWidth(), texture.getHeight(), texture, Constants.DEFAULT_DRAW_TYPE);
 	}
 	
+	public void resetModifiers() { }
+	public void addModifier(SpriteModifier modifier) { }
+	public void reset() { }
+	
 	protected void onBeforeDraw() {
 		if(_refreshVertices) {
 			onUpdateVertices();
@@ -83,7 +95,8 @@ public class Entity {
 	}
 	
 	protected void onDraw(GL10 gl) {
-		if(!_visible)
+		
+		if(!_visible || _drawType == NONE)
 			return;
 		
 		if(!_hasTexture)
@@ -96,9 +109,8 @@ public class Entity {
 				GLHelper.glColor4f(gl, _red, _green, _blue, _alpha);
 				gl.glLoadIdentity();
 				GLHelper.vertexPointer(gl, _vertexBuffer.get());
-				gl.glVertexPointer(2, GL10.GL_FLOAT, 0, _vertexBuffer.get());
 				if(_hasTexture)
-					GLHelper.texCoordPointer(gl, _textureBuffer.getBuffer());
+					GLHelper.texCoordPointer(gl, _textureBuffer.getByteBuffer());
 				gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
 				break;
 			case DRAWTEX:
@@ -139,7 +151,15 @@ public class Entity {
 	
 	protected void onUpdateTexture() {
 		if(_hasTexture) {
-			_textureBuffer.update();
+			switch(_drawType) {
+				case DRAWTEX:
+					break;
+				case NORMAL:
+					_textureBuffer.update();
+					break;
+				case VBO:
+					break;
+			}
 		}
 	}
 	
@@ -244,8 +264,23 @@ public class Entity {
 	public float getAlpha() {
 		return _alpha;
 	}
+	
+	public void setColor(float red, float green, float blue, float alpha) {
+		setRed(red);
+		setGreen(green);
+		setBlue(blue);
+		setAlpha(alpha);
+	}
+	
+	public void setColor(float red, float green, float blue) {
+		setRed(red);
+		setGreen(green);
+		setBlue(blue);
+	}
 
 	public void setTexture(Texture texture) {
+		if(!_hasTexture)
+			_textureBuffer = new TextureBuffer(texture, _drawType);
 		_texture = texture;
 		if(texture != null) {
 			refreshTexture();
@@ -318,6 +353,19 @@ public class Entity {
 
 	public boolean isVisible() {
 		return _visible;
+	}
+
+	public void setDead(boolean dead) {
+		_dead = dead;
+	}
+
+	public boolean isDead() {
+		return _dead;
+	}
+	
+	public void setOffset(int x, int y) {
+		setOffsetX(x);
+		setOffsetY(y);
 	}
 	
 	

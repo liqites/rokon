@@ -8,11 +8,11 @@ import javax.microedition.khronos.opengles.GL10;
  * @author Richard
  */
 public class Layer {
-	public static final int MAX_SPRITES = 85;
-	public static final int MAX_TEXTS = 80;
+	public static final int MAX_ENTITIES = 85;
+	public static final int MAX_TEXTS = 10;
 	public static final int MAX_EMITTERS = 10;
 	
-	private FastDrawableObject[] spriteArr = new DrawableObject[MAX_SPRITES];
+	private Entity[] entityArr = new Entity[MAX_ENTITIES];
 	private Emitter[] emitterArr = new Emitter[MAX_EMITTERS];
 	private Text[] textArr = new Text[MAX_TEXTS];
 	private int i, j, k, l, m, n, o, p, q;
@@ -43,28 +43,25 @@ public class Layer {
 	public void removeText(Text text) {
 		text.markForRemoval();
 	}
-	
-	/**
-	 * @param sprite removes a Sprite object from the layer
-	 */
-	public void removeSprite(FastDrawableObject sprite) {
-		sprite.markForRemoval();
-	}
 
-	/**
-	 * @param sprite adds a Sprite object to the layer
-	 */
-	public void addSprite(FastDrawableObject sprite) {
-		k = -1;
-		for(l = 0; l < MAX_SPRITES; l++)
-			if(spriteArr[l] == null)
-				k = l;
-		if(k == -1) {
-			Debug.print("TOO MANY SPRITES");
+	
+	public void removeEntity(Entity entity) {
+		entity.setDead(true);
+	}
+	
+	public void addEntity(Entity entity) {
+		m = -1;
+		for(n = 0; n < MAX_ENTITIES; n++)
+			if(entityArr[n] == null) {
+				m = n;
+				break;
+			}
+		if(m == -1) {
+			Debug.print("TOO MANY ENTITIES");
 			return;
 		}
-		sprite.revive();
-		spriteArr[k] = sprite;
+		entity.setDead(false);
+		entityArr[m] = entity;
 	}
 	
 	/**
@@ -72,25 +69,29 @@ public class Layer {
 	 * @param emitter
 	 * @return
 	 */
+	private int aa, ab;
 	public void addEmitter(Emitter emitter) {
-		m = -1;
-		for(n = 0; n < MAX_EMITTERS; n++)
-			if(emitterArr[n] == null)
-				m = n;
-		if(m == -1) {
+		aa = -1;
+		for(ab = 0; ab < MAX_EMITTERS; ab++)
+			if(emitterArr[ab] == null) {
+				aa = ab;
+				ab = MAX_EMITTERS;
+				break;
+			}
+		if(aa == -1) {
 			Debug.print("TOO MANY EMITTERS");
 			return;
 		}
-		emitterArr[m] = emitter;
+		emitterArr[aa] = emitter;
 	}
 	
 	/**
 	 * All layers must update their objects positions before they can be drawn, or tested for collisions
 	 */
 	public void updateMovement() {
-		for(o = 0; o < MAX_SPRITES; o++)
-			if(spriteArr[o] != null)
-				spriteArr[o].updateMovement();
+		for(o = 0; o < MAX_ENTITIES; o++)
+			if(entityArr[o] != null)
+				entityArr[o].onBeforeDraw();
 	}
 	
 	/**
@@ -100,11 +101,12 @@ public class Layer {
 	public void drawFrame(GL10 gl) {
 		try {
 
-			for(p = 0; p < MAX_SPRITES; p++) {
-				if(spriteArr[p] != null) {
-					spriteArr[p].drawFrame(gl);
-					if(spriteArr[p].isDead())
-						spriteArr[p] = null;
+			for(p = 0; p < MAX_ENTITIES; p++) {
+				if(entityArr[p] != null) {
+					if(entityArr[p].isDead())
+						entityArr[p] = null;
+					else
+						entityArr[p].onDraw(gl);
 				}
 			}
 			
@@ -131,11 +133,9 @@ public class Layer {
 	 * Removes everything from the layer
 	 */
 	public void clearLayer() {
-		for(q = 0; q < MAX_SPRITES; q++)
-			if(spriteArr[q] != null) {
-				spriteArr[q].resetDynamics();
-				spriteArr[q].resetModifiers();
-				spriteArr[q] = null;
+		for(q = 0; q < MAX_ENTITIES; q++)
+			if(entityArr[q] != null) {
+				entityArr[q] = null;
 			}
 		
 		for(q = 0; q < MAX_EMITTERS; q++)

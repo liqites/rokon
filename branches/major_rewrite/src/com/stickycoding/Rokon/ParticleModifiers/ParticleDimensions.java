@@ -26,8 +26,8 @@ public class ParticleDimensions extends ParticleModifier {
 	}
 	
 	public void onCreate(Particle particle) {
-		particle.setWidth(_minWidth + ((float)Math.random() * (_maxWidth - _minWidth)));
-		particle.setHeight(_minHeight + ((float)Math.random() * (_maxHeight - _minHeight)));
+		particle.setWidth((int)(_minWidth + ((float)Math.random() * (_maxWidth - _minWidth))));
+		particle.setHeight((int)(_minHeight + ((float)Math.random() * (_maxHeight - _minHeight))));
 	}
 	
 }

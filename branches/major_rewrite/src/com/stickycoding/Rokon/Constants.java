@@ -10,6 +10,6 @@ public class Constants {
 	public static int MAX_TEXTURE_ATLAS_COUNT = 10;
 	public static int MAX_TEXTURES_PER_ATLAS = 50;
 	
-	public static int DEFAULT_DRAW_TYPE = Entity.NORMAL;
+	public static int DEFAULT_DRAW_TYPE = Entity.DRAWTEX;
 
 }

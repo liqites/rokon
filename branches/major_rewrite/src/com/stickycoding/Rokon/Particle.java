@@ -6,7 +6,7 @@ package com.stickycoding.Rokon;
  * @author Richard
  */
 
-public class Particle extends DynamicObject {
+public class Particle extends Entity {
 	public static final int MAX_PROPERTIES = 20;
 	
 	public boolean dead = false;
@@ -34,7 +34,7 @@ public class Particle extends DynamicObject {
 	 * @param width
 	 * @param height
 	 */
-	public Particle(Emitter emitter, float x, float y, float width, float height) {
+	public Particle(Emitter emitter, int x, int y, int width, int height) {
 		super(x, y, width, height);
 		_emitter = emitter;
 		this.alpha = 1;

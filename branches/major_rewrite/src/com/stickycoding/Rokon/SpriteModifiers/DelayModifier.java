@@ -1,7 +1,7 @@
 package com.stickycoding.Rokon.SpriteModifiers;
 
+import com.stickycoding.Rokon.Entity;
 import com.stickycoding.Rokon.Rokon;
-import com.stickycoding.Rokon.Sprite;
 import com.stickycoding.Rokon.SpriteModifier;
 
 public class DelayModifier extends SpriteModifier {
@@ -16,7 +16,7 @@ public class DelayModifier extends SpriteModifier {
 		timeout = 0;
 	}
 	
-	public void onUpdate(Sprite sprite) {
+	public void onUpdate(Entity sprite) {
 		if(timeout == 0) {
 			timeout = Rokon.time + time;
 			return;

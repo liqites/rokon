@@ -1,7 +1,7 @@
 package com.stickycoding.Rokon.SpriteModifiers;
 
+import com.stickycoding.Rokon.Entity;
 import com.stickycoding.Rokon.Rokon;
-import com.stickycoding.Rokon.Sprite;
 import com.stickycoding.Rokon.SpriteModifier;
 import com.stickycoding.Rokon.Handlers.BasicHandler;
 
@@ -47,7 +47,7 @@ public class Fade extends SpriteModifier {
 	
 	private long now, timeDiff;
 	private float modifier, alpha;
-	public void onUpdate(Sprite sprite) {
+	public void onUpdate(Entity sprite) {
 		if(_loops == 0) {
 			if(_handler != null)
 				_handler.onFinished();

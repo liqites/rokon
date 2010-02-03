@@ -23,7 +23,7 @@ public class ParticleDynamics extends ParticleModifier {
 	}	
 	
 	public void onCreate(Particle particle) {
-		particle.setVelocityX(_minVelocityX + ((float)Math.random() * (_maxVelocityX - _minVelocityX)));
-		particle.setVelocityY(_minVelocityY + ((float)Math.random() * (_maxVelocityY - _minVelocityY)));
+		//particle.setVelocityX(_minVelocityX + ((float)Math.random() * (_maxVelocityX - _minVelocityX)));
+		//particle.setVelocityY(_minVelocityY + ((float)Math.random() * (_maxVelocityY - _minVelocityY)));
 	}
 }

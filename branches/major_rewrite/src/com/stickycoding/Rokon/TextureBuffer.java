@@ -37,6 +37,8 @@ public class TextureBuffer {
 			case VBO:
 				break;
 		}
+		_tileX = 1;
+		_tileY = 1;
 	}
 	
 	public TextureBuffer(Texture texture) {
@@ -64,7 +66,7 @@ public class TextureBuffer {
 		_tileY = tileY;
 	}
 	
-	public ByteBuffer getBuffer() {
+	public ByteBuffer getByteBuffer() {
 		return _buffer;
 	}
 	
@@ -83,7 +85,7 @@ public class TextureBuffer {
 		return _texture;
 	}
 	
-	private int _x1, _y1, _x2, _y2, xs, ys;
+	private float _x1, _y1, _x2, _y2, xs, ys;
 	public void update() {
 		if(_texture == null || _texture.getTextureAtlas() == null)
 			return;
@@ -102,6 +104,11 @@ public class TextureBuffer {
 				_y1 = _texture.getAtlasY() + (ys * (_tileY - 1));
 				_x2 = _texture.getAtlasX() + (xs * (_tileX - 1)) + xs; 
 				_y2 = _texture.getAtlasY() + (ys * (_tileY - 1)) + ys;
+				
+                _x1 = _x1 / _texture.getTextureAtlas().getWidth();
+                _y1 = _y1 / _texture.getTextureAtlas().getHeight();
+                _x2 = _x2 / _texture.getTextureAtlas().getWidth();
+                _y2 = _y2 / _texture.getTextureAtlas().getHeight();
 	
 				_buffer.position(0);		
 				_buffer.putFloat(_x1); _buffer.putFloat(_y1);

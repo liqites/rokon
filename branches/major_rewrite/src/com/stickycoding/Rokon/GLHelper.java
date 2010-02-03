@@ -11,7 +11,7 @@ import javax.microedition.khronos.opengles.GL11Ext;
  */
 public class GLHelper {
 	
-	public static boolean USE_HELPER = true;
+	public static boolean USE_HELPER = false;
 	
 	private static float _glColor4fRed, _glColor4fGreen, _glColor4fBlue, _glColor4fAlpha = -1;
 	public static void glColor4f(GL10 gl, float red, float green, float blue, float alpha) {

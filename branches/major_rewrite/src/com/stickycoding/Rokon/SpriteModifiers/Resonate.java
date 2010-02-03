@@ -1,7 +1,7 @@
 package com.stickycoding.Rokon.SpriteModifiers;
 
+import com.stickycoding.Rokon.Entity;
 import com.stickycoding.Rokon.Rokon;
-import com.stickycoding.Rokon.Sprite;
 import com.stickycoding.Rokon.SpriteModifier;
 
 public class Resonate extends SpriteModifier {
@@ -22,7 +22,7 @@ public class Resonate extends SpriteModifier {
 		startTime = Rokon.time;
 	}
 	
-	public void onUpdate(Sprite sprite) {
+	public void onUpdate(Entity sprite) {
 		timeDiff = (Rokon.time - startTime) % interval;
 		modifier = (float)timeDiff / (float)interval;
 		pos = Math.cos(modifier * PI * 2 * maxSize);
@@ -33,8 +33,8 @@ public class Resonate extends SpriteModifier {
 		tw = (float)pos * sprite.getHeight();
 		offy = (sprite.getHeight() - tw) / 2;
 		
-		sprite.setScale((float)pos, (float)pos);
-		sprite.setOffset(offx, offy);
+		//sprite.setScale((float)pos, (float)pos);
+		//sprite.setOffset(offx, offy);
 	}
 	
 }

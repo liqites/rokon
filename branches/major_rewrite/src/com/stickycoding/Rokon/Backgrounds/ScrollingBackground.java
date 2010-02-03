@@ -75,7 +75,7 @@ public class ScrollingBackground extends Background {
 		
 		gl.glColor4f(1, 1, 1, 1);
 		gl.glVertexPointer(2, GL11.GL_FLOAT, 0, RokonRenderer.vertexBuffer);
-		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, _buffer.getBuffer());
+		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, _buffer.getByteBuffer());
 		
 		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < cols; j++) {

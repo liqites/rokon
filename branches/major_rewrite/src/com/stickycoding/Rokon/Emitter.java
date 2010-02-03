@@ -10,7 +10,7 @@ import com.stickycoding.Rokon.OpenGL.RokonRenderer;
  * The emitter is the spawning point for particles, much work is still needed to be done here
  * @author Richard
  */
-public class Emitter extends DynamicObject {
+public class Emitter extends Entity {
 	public static int MAX_PARTICLES = 100;
 	public static int MAX_PARTICLE_MODIFIERS = 15;
 	
@@ -34,7 +34,7 @@ public class Emitter extends DynamicObject {
 	 * @param rate number of particles created per second
 	 * @param texture texture of each particle
 	 */
-	public Emitter(float x, float y, float rate, Texture texture) {
+	public Emitter(int x, int y, float rate, Texture texture) {
 		this(x, x, y, y, rate, rate, texture);
 	}
 	
@@ -47,7 +47,7 @@ public class Emitter extends DynamicObject {
 	 * @param rate number of particles created per second
 	 * @param texture texture of each particle
 	 */
-	public Emitter(float x1, float x2, float y1, float y2, float rate, Texture texture) {
+	public Emitter(int x1, int x2, int y1, int y2, float rate, Texture texture) {
 		this(x1, x2, y1, y2, rate, rate, texture);
 	}
 	
@@ -59,7 +59,7 @@ public class Emitter extends DynamicObject {
 	 * @param maxRate maximum number of particles created per second
 	 * @param texture texture of each particle
 	 */
-	public Emitter(float x, float y, float minRate, float maxRate, Texture texture) {
+	public Emitter(int x, int y, float minRate, float maxRate, Texture texture) {
 		this(x, x, y, y, minRate, maxRate, texture);
 	}
 	
@@ -73,8 +73,8 @@ public class Emitter extends DynamicObject {
 	 * @param maxRate maximum number of particles created per second
 	 * @param texture texture of each particle
 	 */
-	public Emitter(float x1, float x2, float y1, float y2, float minRate, float maxRate, Texture texture) {
-		super(x1, y1, x2 - x1, y2 - y1);
+	public Emitter(int x1, int x2, int y1, int y2, float minRate, float maxRate, Texture texture) {
+		super(x1, y1, x2 - x1, y2 - y1, Entity.NONE);
 		_minRate = (1 / minRate) * 1000;
 		_maxRate = (1 / maxRate) * 1000;
 		_nextRate = (float)(Math.random() * (_maxRate - _minRate)) + _minRate;
@@ -84,7 +84,6 @@ public class Emitter extends DynamicObject {
 			_texBuffer[i] = new TextureBuffer(texture, i + 1);
 		}
 		_particleModifier = new ParticleModifier[MAX_PARTICLE_MODIFIERS];
-		setLastUpdate();
 	}
 	
 	/**
@@ -142,7 +141,7 @@ public class Emitter extends DynamicObject {
 	}
 	
 	private void _spawn() {
-		spawnParticle(new Particle(this, getX() + ((float)Math.random() * getWidth()), getY() + ((float)Math.random() * getHeight()), 0, 0));
+		spawnParticle(new Particle(this, (int)(getX() + (Math.random() * getWidth())), (int)(getY() + (Math.random() * getHeight())), 0, 0));
 	}
 	
 	/**
@@ -168,13 +167,11 @@ public class Emitter extends DynamicObject {
 	private long _timeDiff;
 	private int _count;
 	private void _updateSpawns() {
-		_timeDiff = Rokon.time - getLastUpdate();
-		_count = Math.round(_timeDiff / _nextRate);
+		_count = Math.round(Rokon.timeDifference / _nextRate);
 		if(_count > 0) {
 			_nextRate = (float)(Math.random() * (_maxRate - _minRate)) + _minRate;
 			for(i = 0; i < _count; i++)
 				_spawn();
-			setLastUpdate();
 		}
 	}
 	
@@ -184,21 +181,21 @@ public class Emitter extends DynamicObject {
 		if(_blendFunction != null)
 			gl.glBlendFunc(_blendFunction.getSrc(), _blendFunction.getDst());
 		if(_texBuffer.length == 1)
-			gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, _texBuffer[0].getBuffer());
+			gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, _texBuffer[0].getByteBuffer());
 		gl.glVertexPointer(2, GL11.GL_FLOAT, 0, RokonRenderer.vertexBuffer);
 		_texture.select(gl);
 		
 		for(i = 0; i < MAX_PARTICLES; i++) {
 			if(particleArr[i] != null) {
 				updateParticle(particleArr[i]);
-				particleArr[i].updateMovement();
+				particleArr[i].onUpdate();
 				if(particleArr[i].dead) {
 					particleArr[i] = null;
 				} else {
 					if(particleArr[i].getX() + particleArr[i].getWidth() < 0 || particleArr[i].getX() > Rokon.getRokon().getWidth() || particleArr[i].getY() + particleArr[i].getHeight() < 0 || particleArr[i].getY() > Rokon.getRokon().getHeight()) {
 						if(Rokon.getRokon().isForceOffscreenRender()) {
 							if(_texBuffer.length > 1)
-								gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, _texBuffer[particleArr[i].getTileIndex()].getBuffer());
+								gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, _texBuffer[particleArr[i].getTileIndex()].getByteBuffer());
 							gl.glLoadIdentity();
 							gl.glTranslatef(particleArr[i].getX(), particleArr[i].getY(), 0);
 							gl.glScalef(particleArr[i].getWidth(), particleArr[i].getHeight(), 0);
@@ -207,7 +204,7 @@ public class Emitter extends DynamicObject {
 						}
 					} else {
 						if(_texBuffer.length > 1)
-							gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, _texBuffer[particleArr[i].getTileIndex()].getBuffer());
+							gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, _texBuffer[particleArr[i].getTileIndex()].getByteBuffer());
 						gl.glLoadIdentity();
 						gl.glTranslatef(particleArr[i].getX(), particleArr[i].getY(), 0);
 						gl.glScalef(particleArr[i].getWidth(), particleArr[i].getHeight(), 0);

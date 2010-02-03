@@ -90,7 +90,7 @@ public class Rokon {
 	private boolean _forceOffscreenRender = false;
 	
 	public static float timeModifier;
-	public static long previousTime;
+	public static long previousTime, timeDifference;
 	
 	private Menu _menu = null;
 	
@@ -520,6 +520,7 @@ public class Rokon {
 				time = System.currentTimeMillis() - _pauseTime;
 			
 			timeModifier = (time - previousTime) / 1000f;
+			timeDifference = time - previousTime;
 			
 			realTime = System.currentTimeMillis();
 			
@@ -554,6 +555,7 @@ public class Rokon {
 			if(_hasRenderHook)
 				_renderHook.onAfterDraw(gl);
 			
+			/*
 			if(_letterBoxMode) {
 				gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 				gl.glDisable(GL10.GL_TEXTURE_2D);
@@ -569,7 +571,7 @@ public class Rokon {
 				
 				gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 				gl.glEnable(GL10.GL_TEXTURE_2D);
-			}
+			}*/
 			
 			if(time > _frameTimer) {
 				_frameRate = _frameCount;
@@ -584,40 +586,6 @@ public class Rokon {
 			e.printStackTrace();
 		}
 	}	
-	
-	/**
-	 * Adds a sprite to the bottom Layer (zero)
-	 * @param sprite
-	 */
-	public void addSprite(FastDrawableObject sprite) {
-		getLayer(0).addSprite(sprite);
-	}
-	
-	/**
-	 * Adds a sprite to a Layer
-	 * @param sprite
-	 * @param layer
-	 */
-	public void addSprite(FastDrawableObject sprite, int layer) {
-		getLayer(layer).addSprite(sprite);
-	}
-	
-	/**
-	 * Removes a sprite from a Layer
-	 * @param sprite
-	 * @param layer
-	 */
-	public void removeSprite(FastDrawableObject sprite, int layer) {
-		getLayer(layer).removeSprite(sprite);
-	}
-	
-	/**
-	 * Removes a sprite from the bottom Layer (zero)
-	 * @param sprite
-	 */
-	public void removeSprite(FastDrawableObject sprite) {
-		getLayer(0).removeSprite(sprite);
-	}
 	
 	/**
 	 * Adds Text to the bottom Layer (zero)
@@ -744,6 +712,22 @@ public class Rokon {
 		if(time == 0)
 			time = System.currentTimeMillis();
 		return time;
+	}
+	
+	public void addSprite(Entity sprite, int layer) {
+		_layer[layer].addEntity(sprite);
+	}
+	
+	public void addSprite(Entity sprite) {
+		addSprite(sprite, 1);
+	}
+	
+	public void addEntity(Entity entity, int layer) {
+		_layer[layer].addEntity(entity);
+	}
+	
+	public void addEntity(Entity entity) {
+		addEntity(entity, 1);
 	}
 	
 	/**

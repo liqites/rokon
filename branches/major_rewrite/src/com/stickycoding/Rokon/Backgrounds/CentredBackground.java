@@ -26,7 +26,7 @@ public class CentredBackground extends Background {
 		_buffer.getTexture().select(gl);
 		
 		gl.glVertexPointer(2, GL11.GL_FLOAT, 0, RokonRenderer.vertexBuffer);
-		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, _buffer.getBuffer());
+		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, _buffer.getByteBuffer());
 		gl.glLoadIdentity();
 		gl.glScalef(Rokon.getRokon().getWidth(), Rokon.getRokon().getHeight(), 0);
 		gl.glColor4f(1, 1, 1, 1);

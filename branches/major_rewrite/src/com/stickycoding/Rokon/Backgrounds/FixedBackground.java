@@ -4,9 +4,12 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
 import com.stickycoding.Rokon.Background;
+import com.stickycoding.Rokon.Debug;
+import com.stickycoding.Rokon.GLHelper;
 import com.stickycoding.Rokon.Rokon;
 import com.stickycoding.Rokon.Texture;
 import com.stickycoding.Rokon.TextureBuffer;
+import com.stickycoding.Rokon.VertexBuffer;
 import com.stickycoding.Rokon.OpenGL.RokonRenderer;
 
 
@@ -18,18 +21,20 @@ import com.stickycoding.Rokon.OpenGL.RokonRenderer;
 public class FixedBackground extends Background {
 	
 	public TextureBuffer _buffer;
+	public VertexBuffer _vb;
 	
 	public FixedBackground(Texture texture) {
-		_buffer = new TextureBuffer(texture);
+		_buffer = new TextureBuffer(texture, TextureBuffer.NORMAL);
+		_vb = new VertexBuffer(0, 0, Rokon.fixedWidth, Rokon.fixedHeight);
+		_buffer.update();
 	}
 	
 	public void drawFrame(GL10 gl) {
-		_buffer.getTexture().select(gl);
-		gl.glVertexPointer(2, GL11.GL_FLOAT, 0, RokonRenderer.vertexBuffer);
-		gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, _buffer.getBuffer());
+		GLHelper.selectTexture(gl, _buffer.getTexture());
+		GLHelper.glColor4f(gl, 1, 1, 1, 1);
 		gl.glLoadIdentity();
-		gl.glScalef(Rokon.getRokon().getWidth(), Rokon.getRokon().getHeight(), 0);
-		gl.glColor4f(1, 1, 1, 1);
+		GLHelper.vertexPointer(gl, _vb.get());
+		GLHelper.texCoordPointer(gl, _buffer.getByteBuffer());
 		gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
 	}
 }

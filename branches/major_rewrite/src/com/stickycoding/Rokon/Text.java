@@ -19,7 +19,7 @@ public class Text {
 	private int _x;
 	private int _y;
 	private Font _font;
-	private Sprite[] _sprite;
+	private Entity[] _sprite;
 	private int _scale;
 	
 	private float _red;
@@ -162,16 +162,16 @@ public class Text {
 	private int length, x, i, characterIndex;
 	private float width;
 	private String character;
-	private Sprite[] newSprites;
+	private Entity[] newSprites;
 	private void _updateSprites() {
 		length = _text.length();
 		x = _x;
-		newSprites = new Sprite[length];
+		newSprites = new Entity[length];
 		for(i = 0; i < length; i++) {
 			character = _text.substring(i, i + 1);
 			characterIndex = Font.getCharacterPosition(character);
 			width = (float)_font.getCharacterWidth(characterIndex) / 32f * (float)_scale;
-			newSprites[i] = new Sprite(x, _y, _scale, _scale, _font);
+			newSprites[i] = new Entity(x, _y, _scale, _scale, _font);
 			Debug.print("Drawing " + character + " at " + x + " " + _y);
 			newSprites[i].setTexture(_font);
 			newSprites[i].setTileIndex(characterIndex + 1);
@@ -186,7 +186,7 @@ public class Text {
 	
 	public void drawFrame(GL10 gl) {
 		for(int i = 0; i < _sprite.length; i++)
-			_sprite[i].drawFrame(gl);
+			_sprite[i].onDraw(gl);
 	}
 
 }
