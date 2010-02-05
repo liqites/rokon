@@ -134,6 +134,7 @@ public class RokonRenderer implements GLSurfaceView.Renderer {
 			new Thread(new Runnable() {
 				public void run() {
 					_rokon.onLoad();
+					_rokon.prepareEngine();
 					_rokon.onLoadComplete();
 					_rokon.startGameLoop();
 					Rokon.setLoading(false);

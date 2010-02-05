@@ -11,7 +11,17 @@ public class Entity {
 	private float _xf, _yf, _widthf, _heightf;
 	private float _velXf, _velYf, _accXf, _accYf;
 	
+	private int _drawPriority = Rokon.getDrawPriority();
+	
 	private boolean _requiresPositionUpdate;
+	
+	public int getDrawPriority() {
+		return _drawPriority;
+	}
+	
+	public void setDrawPriority(int drawPriority) {
+		_drawPriority = drawPriority;
+	}
 	
 	public void remove() {
 		_dead = true;

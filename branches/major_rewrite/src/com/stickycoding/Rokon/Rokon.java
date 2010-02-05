@@ -1,6 +1,7 @@
 package com.stickycoding.Rokon;
 
 import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
@@ -17,6 +18,10 @@ public class Rokon extends Activity {
 	public static final int DRAW_PRIORITY_VBO_DRAWTEX_NORMAL = 2;
 	public static final int DRAW_PRIORITY_DRAWTEX_NORMAL = 3;
 	public static final int DRAW_PRIORITY_DRAWTEX_VBO_NORMAL = 4;
+	
+	public static long time, previousTime, pauseTime, timeDifference;
+	public static int timeModifier;
+	public static float timeModifierf;
 	
 	protected static Rokon rokon;
 	
@@ -35,6 +40,7 @@ public class Rokon extends Activity {
 	private boolean _hasScene;
 	
 	private static boolean _supportVBO, _supportDrawTex;
+	private static boolean _useVBO, _useDrawTex;
 	
 	private static boolean _hasLoadingScreen;
 	private static String _loadingScreenPath;	
@@ -46,6 +52,8 @@ public class Rokon extends Activity {
 	private static boolean _threadedGameLoop = false, _screenSpecificDirectories, _landscape, _fixedPoints, _showFps;
 	private static int _gameWidth, _gameHeight;
 	private int _defaultLayerCount = 1, _defaultMaxEntityCount = 10;
+	
+	private static boolean _waitingForTextures, _waitingForVBO;
 	
 	public void onCreate() { }
 	public void onLoad() { }
@@ -236,10 +244,16 @@ public class Rokon extends Activity {
 		setContentView(_surfaceView);
 		if(!_hasLoadingScreen) {
 			onLoad();
+			prepareEngine();
 			onLoadComplete();
 		} else {
 			_isLoading = true;
 		}
+	}
+	
+	protected void prepareEngine() {
+		VBOManager.reload();
+		TextureManager.reload();
 	}
 	
 	protected static boolean isLoading() {
@@ -251,9 +265,27 @@ public class Rokon extends Activity {
 	}
 	
 	protected void onDraw(GL10 gl) {
+		TextureManager.updateTextures(gl);
+		
+		if(_useVBO)
+			VBOManager.loadBuffers((GL11)gl);
+
+		previousTime = time;
+		time = System.currentTimeMillis() - pauseTime;
+		timeDifference = time - previousTime;
+		
+		if(_fixedPoints)
+			timeModifier = (int)(fixedPointUnit * (timeDifference / 1000));
+		else
+			timeModifierf = timeDifference / 1000f;
+		
 		if(_hasScene) {
 			if(!_threadedGameLoop)
 				_scene.onGameLoop();
+
+			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+	        gl.glMatrixMode(GL10.GL_MODELVIEW);
+	        gl.glLoadIdentity();
 			
 			_scene.onDraw(gl);
 			
@@ -301,6 +333,24 @@ public class Rokon extends Activity {
 
 	public void setDrawPriority(int priority) {
 		_drawPriority = priority;
+		switch(priority) {
+		case DRAW_PRIORITY_DRAWTEX_NORMAL:
+			_useDrawTex = true;
+			_useVBO = false;
+			break;
+		case DRAW_PRIORITY_DRAWTEX_VBO_NORMAL:
+			_useDrawTex = true;
+			_useVBO = true;
+			break;
+		case DRAW_PRIORITY_VBO_DRAWTEX_NORMAL:
+			_useVBO = true;
+			_useDrawTex = true;
+			break;
+		case DRAW_PRIORITY_VBO_NORMAL:
+			_useVBO = true;
+			_useDrawTex =false;
+			break;
+		}
 	}
 	
 	public static int getDrawPriority() {
@@ -322,6 +372,14 @@ public class Rokon extends Activity {
 	
 	public static void setFixedPointUnit(int fixedPointUnit) {
 		Rokon.fixedPointUnit = fixedPointUnit;
+	}
+	
+	protected static void vboLoadComplete() {
+		_waitingForVBO = false;
+	}
+	
+	protected static void textureLoadComplete() {
+		_waitingForTextures = false;
 	}
 	
 }
