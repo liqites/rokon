@@ -5,23 +5,17 @@ import javax.microedition.khronos.opengles.GL10;
 public class Entity {
 	
 	private boolean _dead;
+	
 	private int _x, _y, _width, _height;
 	private int _velX, _velY, _accX, _accY;
+	private int _rotationAngle, _rotationPivotX, _rotationPivotY;
+	private boolean _rotateAboutCentre = true;
 	
 	private float _xf, _yf, _widthf, _heightf;
 	private float _velXf, _velYf, _accXf, _accYf;
-	
-	private int _drawPriority = Rokon.getDrawPriority();
+	private float _rotationAnglef, _rotationPivotXf, _rotationPivotYf;
 	
 	private boolean _requiresPositionUpdate;
-	
-	public int getDrawPriority() {
-		return _drawPriority;
-	}
-	
-	public void setDrawPriority(int drawPriority) {
-		_drawPriority = drawPriority;
-	}
 	
 	public void remove() {
 		_dead = true;
@@ -35,8 +29,30 @@ public class Entity {
 		_dead = false;
 	}
 	
-	protected void onDraw(GL10 gl) {
-		
+	public void setRotationPivot(int rotationPivotX, int rotationPivotY) {
+		_rotationPivotX = rotationPivotX;
+		_rotationPivotY = rotationPivotY;
+		_rotateAboutCentre = false;
+	}
+	
+	public void setRotationPivotAboutCentre() {
+		_rotateAboutCentre = true; 
+	}
+	
+	public void setRotation(int rotationAngle) {
+		_rotationAngle = rotationAngle;
+	}
+	
+	public void setRotationf(float rotationAngle) {
+		_rotationAnglef = rotationAngle;
+	}
+	
+	public void rotate(int rotationAngle) {
+		_rotationAngle += rotationAngle;
+	}
+	
+	public void rotate(float rotationAngle) {
+		_rotateionAnglef += rotationAngle;
 	}
 	
 	public void setX(int x) {
@@ -235,8 +251,38 @@ public class Entity {
 		//TODO set acceleration from angle, 0 to 1
 	}
 	
-	protected void onUpdate() {
+	protected void onDraw(GL10 gl) {
 		
+	}
+	
+	protected void onUpdate() {
+		if(Rokon.isFixedPoints()) {
+			if(_accX != 0)
+				_velX += _accX * Rokon.timeModifier;
+			if(_velX != 0) {
+				_x += _velX * Rokon.timeModifier;
+				_requiresPositionUpdate = true;
+			}
+			if(_accY != 0)
+				_velY += _accY * Rokon.timeModifierf;
+			if(_velY!= 0) {
+				_y += _velY * Rokon.timeModifier;
+				_requiresPositionUpdate = true;
+			}
+		} else {
+			if(_accXf != 0)
+				_velXf += _accXf * Rokon.timeModifierf;
+			if(_velXf != 0) {
+				_xf += _velXf * Rokon.timeModifierf;
+				_requiresPositionUpdate = true;
+			}
+			if(_accYf != 0)
+				_velYf += _accYf * Rokon.timeModifierf;
+			if(_velYf != 0) {
+				_yf += _velYf * Rokon.timeModifierf;
+				_requiresPositionUpdate = true;
+			}
+		}
 	}
 	
 	

@@ -382,4 +382,12 @@ public class Rokon extends Activity {
 		_waitingForTextures = false;
 	}
 	
+	public static boolean usingVBO() {
+		return _useVBO;
+	}
+	
+	public static boolean usingDrawTex() {
+		return _useDrawTex;
+	}
+	
 }
