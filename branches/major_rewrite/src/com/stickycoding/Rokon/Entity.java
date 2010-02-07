@@ -178,13 +178,13 @@ public class Entity {
 	
 	protected void onUpdate() {
 		if(_accX != 0)
-			_velX += (_accX / Rokon.fixedPointUnit) * Rokon.timeModifier;
+			_velX += FP.mul(_accX, Rokon.timeModifier);
 		if(_velX != 0)
-			_x += (_velX / Rokon.fixedPointUnit) * Rokon.timeModifier;
+			_x += FP.mul(_velX, Rokon.timeModifier);
 		if(_accY != 0)
-			_velY += (_accY / Rokon.fixedPointUnit) * Rokon.timeModifier;
+			_velY += FP.mul(_accY, Rokon.timeModifier);
 		if(_velY!= 0)
-			_y += (_velY / Rokon.fixedPointUnit) * Rokon.timeModifier;
+			_y += FP.mul(_velY, Rokon.timeModifier);
 	}
 	
 	protected boolean requiresPositionUpdate() {

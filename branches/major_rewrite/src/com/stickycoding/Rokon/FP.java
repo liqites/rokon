@@ -23,7 +23,7 @@ package com.stickycoding.Rokon;
 * @version $Id: FP.java,v 1.6 2001/04/05 07:40:17 hqm Exp $ 
 */ 
 
-public class FP { 
+public class FP {
 
      public static int toInt(int x) { 
           return x >> 16; 
@@ -96,6 +96,7 @@ public class FP {
      public static final int PI_OVER_2 = PI / 2; 
      public static final int E = 178145; 
      public static final int HALF = 2 << 15; 
+     public static final int ONE = 0x10000;
       
       
      static final int SK1 = 498; 

@@ -4,6 +4,7 @@ import android.view.MotionEvent;
 
 import com.stickycoding.Rokon.Debug;
 import com.stickycoding.Rokon.Entity;
+import com.stickycoding.Rokon.FP;
 import com.stickycoding.Rokon.Rokon;
 import com.stickycoding.Rokon.Scene;
 import com.stickycoding.Rokon.Sprite;
@@ -38,7 +39,7 @@ public class GameActivity extends Rokon {
 
 		public MyScene() {
 			super();
-			sprite = new Sprite(100 * Rokon.fixedPointUnit, 100 * Rokon.fixedPointUnit, 50 * Rokon.fixedPointUnit, 50 * Rokon.fixedPointUnit);
+			sprite = new Sprite(FP.fromInt(100), FP.fromInt(100), FP.fromInt(100), FP.fromInt(100));
 			//Sprite sprite = new Sprite(10, 10, 50, 50);
 			
 			atlas = new TextureAtlas(512, 512);
@@ -62,15 +63,15 @@ public class GameActivity extends Rokon {
 			Rokon.pauseGame();
 		}
 		public void onTouchMove(int x, int y, MotionEvent event) { }
-		public void onTouchUp(Entity entity, int x, int y, MotionEvent event) { 
-			//sprite.setVelX(0);
+		public void onTouchUp(int x, int y, MotionEvent event) { 
 			down = false;
+			sprite.scale(1, 1);
 			Rokon.unpauseGame();
 			Debug.print("Up");
 		}
 		
 		public void onGameLoop() {
-			sprite.rotate(1 * Rokon.fixedPointUnit);
+			//sprite.rotate(FP.fromInt(1));
 			if(down) {
 				sprite.scaleFromCentre(sprite.getScaleX() + 0.01f, sprite.getScaleY() + 0.01f);
 			}

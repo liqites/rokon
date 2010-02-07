@@ -24,9 +24,7 @@ public class Rokon extends Activity {
 	protected static Rokon rokon;
 	
 	public static int lastTouchX, lastTouchY;
-	
-	public static int fixedPointUnit = 0x10000;
-	
+
 	public static long prevLoopTime, prevDrawTime, loopTime, drawTime;
 	private static boolean _paused;
 	private static long _pauseOnTime;
@@ -112,8 +110,8 @@ public class Rokon extends Activity {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if(_scene != null) {
-			lastTouchX = (int)((event.getX() / DeviceScreen.getDisplayMetrics().widthPixels) * _gameWidth * fixedPointUnit);
-			lastTouchY = (int)((event.getY() / DeviceScreen.getDisplayMetrics().heightPixels) * _gameHeight * fixedPointUnit);
+			lastTouchX = FP.fromFloat((event.getX() / DeviceScreen.getDisplayMetrics().widthPixels) * _gameWidth);
+			lastTouchY = FP.fromFloat((event.getY() / DeviceScreen.getDisplayMetrics().heightPixels) * _gameHeight);
 			_scene.handleTouch(lastTouchX, lastTouchY, event);
 		}
 		try {
@@ -299,7 +297,7 @@ public class Rokon extends Activity {
 			if(!_paused) {
 				time = realTime - pauseTime;
 				timeDifference = time - previousTime;
-				timeModifier = (int)(((float)timeDifference / 1000f) * fixedPointUnit);
+				timeModifier = FP.fromFloat((float)timeDifference / 1000f);
 			}
 			
 			if(!_threadedGameLoop)
@@ -391,10 +389,6 @@ public class Rokon extends Activity {
 	
 	public static boolean supportDrawTex() {
 		return _supportDrawTex;
-	}
-	
-	public static void setFixedPointUnit(int fixedPointUnit) {
-		Rokon.fixedPointUnit = fixedPointUnit;
 	}
 	
 	public static boolean usingVBO() {
