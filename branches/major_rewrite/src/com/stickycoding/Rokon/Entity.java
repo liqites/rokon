@@ -13,7 +13,7 @@ public class Entity {
 	
 	private int _id = -1;
 	
-	private float _scaleX = 1, _scaleY = 1;
+	private int _scaleX = FP.ONE, _scaleY = FP.ONE;
 	private boolean _scaleFromCentre;
 		
 	private boolean _requiresPositionUpdate;
@@ -48,10 +48,22 @@ public class Entity {
 	
 	public void setRotation(int rotationAngle) {
 		_rotationAngle = rotationAngle;
+		_rotateAboutCentre = false;
+	}
+	
+	public void setRotationAboutCentre(int rotationAngle) {
+		_rotationAngle = rotationAngle;
+		_rotateAboutCentre = true;
 	}
 	
 	public void rotate(int rotationAngle) {
 		_rotationAngle += rotationAngle;
+		_rotateAboutCentre = false;
+	}
+	
+	public void rotateAboutCentre(int rotationAngle) {
+		_rotationAngle += rotationAngle;
+		_rotateAboutCentre = true;
 	}
 	
 	public int getRotationAngle() {
@@ -191,43 +203,43 @@ public class Entity {
 		return _requiresPositionUpdate;
 	}	
 	
-	public void scale(float scaleX, float scaleY) {
+	public void scale(int scaleX, int scaleY) {
 		_scaleX = scaleX;
 		_scaleY = scaleY;
 		_scaleFromCentre = false;
 	}
 	
-	public void scaleFromCentre(float scaleX, float scaleY) {
+	public void scaleFromCentre(int scaleX, int scaleY) {
 		_scaleX = scaleX;
 		_scaleY = scaleY;
 		_scaleFromCentre = true;
 	}
 	
-	public void scaleX(float scaleX) {
+	public void scaleX(int scaleX) {
 		_scaleX = scaleX;
 		_scaleFromCentre = false;
 	}
 	
-	public void scaleXFromCentre(float scaleX) {
+	public void scaleXFromCentre(int scaleX) {
 		_scaleX = scaleX;
 		_scaleFromCentre = true;
 	}
 	
-	public void scaleY(float scaleY) {
+	public void scaleY(int scaleY) {
 		_scaleY = scaleY;
 		_scaleFromCentre = false;
 	}
 	
-	public void scaleYFromCentre(float scaleY) {
+	public void scaleYFromCentre(int scaleY) {
 		_scaleY = scaleY;
 		_scaleFromCentre = true;
 	}
 	
-	public float getScaleX() {
+	public int getScaleX() {
 		return _scaleX;
 	}
 	
-	public float getScaleY() {
+	public int getScaleY() {
 		return _scaleY;
 	}
 	

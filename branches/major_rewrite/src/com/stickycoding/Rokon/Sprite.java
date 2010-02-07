@@ -135,30 +135,35 @@ public class Sprite extends Entity {
 		if(getRotationAngle() != 0) {
 			if(isRotateAboutCentre()) {
 				if(isScaleFromCentre())
-					gl.glTranslatex((int)(getWidth() * getScaleX() / 2) - (int)((getWidth() * (getScaleX() - 1)) / 2), (int)(getHeight() * getScaleY() / 2) - (int)((getHeight() * (getScaleY() - 1)) / 2), 0);
+					gl.glTranslatex(FP.div(FP.mul(getWidth(), getScaleX()), FP.TWO) - FP.div(FP.mul(getWidth(), getScaleX() - FP.ONE), FP.TWO), FP.div(FP.mul(getHeight(), getScaleY()), FP.TWO) - FP.div(FP.mul(getHeight(), getScaleY() - FP.ONE), FP.TWO), 0);
 				else
-					gl.glTranslatex((int)(getWidth() * getScaleX() / 2), (int)(getHeight() * getScaleY() / 2), 0);
+					gl.glTranslatex(FP.div(FP.mul(getWidth(), getScaleX()), FP.TWO), FP.div(FP.mul(getHeight(), getScaleY()), FP.TWO), 0);
+				
 				gl.glRotatex(getRotationAngle(), 0, 0, 0x10000);
+				
 				if(isScaleFromCentre())
-					gl.glTranslatex(-(int)(getWidth() * getScaleX() / 2) + (int)((getWidth() * (getScaleX() - 1)) / 2), -(int)(getHeight() * getScaleY() / 2) + (int)((getHeight() * (getScaleY() - 1)) / 2), 0);
-					else
-					gl.glTranslatex(-(int)(getWidth() * getScaleX() / 2), -(int)(getHeight() * getScaleY() / 2), 0);
-			} else {
+					gl.glTranslatex(-FP.div(FP.mul(getWidth(), getScaleX()), FP.TWO) + FP.div(FP.mul(getWidth(), getScaleX() - FP.ONE), FP.TWO), -FP.div(FP.mul(getHeight(), getScaleY()), FP.TWO) + FP.div(FP.mul(getHeight(), getScaleY() - FP.ONE), FP.TWO), 0);
+				else
+					gl.glTranslatex(-FP.div(FP.mul(getWidth(), getScaleX()), FP.TWO), -FP.div(FP.mul(getHeight(), getScaleY()), FP.TWO), 0);
+				
+			} else 
+			{
 				if(isScaleFromCentre())
-					gl.glTranslatex(getRotationPivotX() - (int)((getWidth() * (getScaleX() - 1)) / 2), getRotationPivotY() - (int)((getHeight() * (getScaleY() - 1)) / 2), 0);
+					gl.glTranslatex(getRotationPivotX() - FP.div(FP.mul(getWidth(), getScaleX() - FP.ONE), FP.TWO), getRotationPivotY() - FP.div(FP.mul(getHeight(), getScaleY() - FP.ONE), FP.TWO), 0);
 				else
 					gl.glTranslatex(getRotationPivotX(), getRotationPivotY(), 0);
 				gl.glRotatex(getRotationAngle(), 0, 0, 0x10000);
 				if(isScaleFromCentre())
-					gl.glTranslatex(-getRotationPivotX() + (int)((getWidth() * (getScaleX() - 1)) / 2), -getRotationPivotY() + (int)((getHeight() * (getScaleY() - 1)) / 2), 0);
+					gl.glTranslatex(-getRotationPivotX() + FP.div(FP.mul(getWidth(), getScaleX() - FP.ONE), FP.TWO), -getRotationPivotY() + FP.div(FP.mul(getHeight(), getScaleY() - FP.ONE), FP.TWO), 0);
 				else
 					gl.glTranslatex(-getRotationPivotX(), -getRotationPivotY(), 0);
 			}
 		}
-		if(getScaleX() != 1 || getScaleY() != 1) {
+		if(getScaleX() != FP.ONE || getScaleY() != FP.ONE) {
 			if(isScaleFromCentre())
-				gl.glTranslatex(-(int)((getWidth() * (getScaleX() - 1)) / 2), -(int)((getHeight() * (getScaleY() - 1)) / 2), 0);
-			gl.glScalef(getScaleX(), getScaleY(), 0);
+				gl.glTranslatex(-FP.div(FP.mul(getWidth(), getScaleX() - FP.ONE), FP.TWO), -FP.div(FP.mul(getHeight(), getScaleY() - FP.ONE), FP.TWO), 0);
+			Debug.print("w=" + getWidth() + " sx=" + getScaleX() + " sxf=" + (getScaleX() - FP.ONE) +" m=" + FP.mul(getWidth(), getScaleX() - FP.ONE));
+			gl.glScalex(getScaleX(), getScaleY(), 0);
 		}
 		if(_hasTexture) {
 			GLHelper.enableTextures();

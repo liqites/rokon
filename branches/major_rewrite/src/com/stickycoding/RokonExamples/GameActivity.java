@@ -56,24 +56,22 @@ public class GameActivity extends Rokon {
 		
 		boolean down = false;
 		
-		public void onTouchDown(Entity entity, int x, int y, MotionEvent event) { 
+		public void onTouchDown(int x, int y, MotionEvent event) { 
 			//sprite.scaleFromCentre(sprite.getScaleX() + 0.2f, sprite.getScaleY() + 0.1f);
 			down = true;
-			Debug.print("Pressed down");
 			Rokon.pauseGame();
 		}
 		public void onTouchMove(int x, int y, MotionEvent event) { }
 		public void onTouchUp(int x, int y, MotionEvent event) { 
 			down = false;
-			sprite.scale(1, 1);
+			sprite.scale(FP.ONE, FP.ONE);
 			Rokon.unpauseGame();
-			Debug.print("Up");
 		}
 		
 		public void onGameLoop() {
-			//sprite.rotate(FP.fromInt(1));
 			if(down) {
-				sprite.scaleFromCentre(sprite.getScaleX() + 0.01f, sprite.getScaleY() + 0.01f);
+				sprite.rotateAboutCentre(FP.fromInt(1));
+				sprite.scaleFromCentre(sprite.getScaleX() + FP.div(1, 100), sprite.getScaleY() +  + FP.div(1, 100));
 			}
 		}
 		

@@ -96,8 +96,18 @@ public class FP {
      public static final int PI_OVER_2 = PI / 2; 
      public static final int E = 178145; 
      public static final int HALF = 2 << 15; 
+     
+     
      public static final int ONE = 0x10000;
-      
+     public static final int TWO = ONE * 2;
+     public static final int THREE = ONE * 3;
+     public static final int FOUR = ONE * 4;
+     public static final int FIVE = ONE * 5; 
+     public static final int SIX = ONE * 6; 
+     public static final int SEVEN = ONE * 7; 
+     public static final int EIGHT = ONE * 8; 
+     public static final int NINE = ONE * 9; 
+     public static final int TEN = ONE * 10;
       
      static final int SK1 = 498; 
      static final int SK2 = 10882; 
