@@ -10,6 +10,9 @@ public class Entity {
 	private int _velX, _velY, _accX, _accY;
 	private int _rotationAngle, _rotationPivotX, _rotationPivotY;
 	private boolean _rotateAboutCentre = true;
+	
+	private float _scaleX = 1, _scaleY = 1;
+	private boolean _scaleFromCentre;
 		
 	private boolean _requiresPositionUpdate;
 	
@@ -183,5 +186,49 @@ public class Entity {
 	protected boolean requiresPositionUpdate() {
 		return _requiresPositionUpdate;
 	}	
+	
+	public void scale(float scaleX, float scaleY) {
+		_scaleX = scaleX;
+		_scaleY = scaleY;
+		_scaleFromCentre = false;
+	}
+	
+	public void scaleFromCentre(float scaleX, float scaleY) {
+		_scaleX = scaleX;
+		_scaleY = scaleY;
+		_scaleFromCentre = true;
+	}
+	
+	public void scaleX(float scaleX) {
+		_scaleX = scaleX;
+		_scaleFromCentre = false;
+	}
+	
+	public void scaleXFromCentre(float scaleX) {
+		_scaleX = scaleX;
+		_scaleFromCentre = true;
+	}
+	
+	public void scaleY(float scaleY) {
+		_scaleY = scaleY;
+		_scaleFromCentre = false;
+	}
+	
+	public void scaleYFromCentre(float scaleY) {
+		_scaleY = scaleY;
+		_scaleFromCentre = true;
+	}
+	
+	public float getScaleX() {
+		return _scaleX;
+	}
+	
+	public float getScaleY() {
+		return _scaleY;
+	}
+	
+	public boolean isScaleFromCentre() {
+		return _scaleFromCentre;
+	}
 
 }

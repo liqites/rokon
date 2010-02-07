@@ -1,11 +1,17 @@
 package com.stickycoding.Rokon;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import javax.microedition.khronos.opengles.GL10;
 
+import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 public class Scene {
+	
+	private ArrayList<TextureAtlas> _textureAtlas;
 	
 	public Rokon rokon;
 	private Background _background;
@@ -13,11 +19,15 @@ public class Scene {
 	private int _layerCount, _maxEntityCount;
 	private Entity[][] _entity;
 	
+	public Bundle lastBundle, thisBundle;
+	
 	public void onCreate() { }
 	public void onDestroy() { }
 	public void onPause() { }
 	public void onResume() { }
 	public void onGameLoop() { }
+	public void onSceneLoad(Bundle incomingBundle) { }
+	public void onSceneExit() { }
 	
 	public void onPreDraw(GL10 gl) { }
 	public void onPostBackgroundDraw(GL10 gl) { }
@@ -45,6 +55,7 @@ public class Scene {
 		_entity = new Entity[_layerCount][];
 		for(int i = 0; i < _layerCount; i++)
 			_entity[i] = new Entity[_maxEntityCount];
+		_textureAtlas = new ArrayList<TextureAtlas>();
 	}
 	
 	public Scene() {
@@ -112,8 +123,8 @@ public class Scene {
 	protected void onDraw(GL10 gl) {
 		onPreDraw(gl);
 		if(_hasBackground) {
-			onPostBackgroundDraw(gl);
 			_background.onDraw(gl);
+			onPostBackgroundDraw(gl);
 		}
 		for(int i = 0; i < _layerCount; i++) {
 			onPreDraw(gl, i);
@@ -127,7 +138,31 @@ public class Scene {
 		onPostDraw(gl);
 	}
 	
+	protected void loadScene(Bundle incomingBundle) {
+		lastBundle = incomingBundle;
+		thisBundle = new Bundle();
+		TextureManager.removeAll();
+		for (Iterator<TextureAtlas> it = _textureAtlas.iterator(); it.hasNext(); )
+			TextureManager.load(it.next());
+		System.gc();
+	}
 	
+	protected Bundle destroyScene() {
+		TextureManager.removeAll();
+		return thisBundle;
+	}
+	
+	public void addTextureAtlas(TextureAtlas atlas) {
+		_textureAtlas.add(atlas);
+	}
+	
+	public void removeTextureAtlas(TextureAtlas atlas) {
+		_textureAtlas.remove(atlas);
+	}
+	
+	public void clearTextureAtlas() {
+		_textureAtlas.clear();
+	}
 	
 
 }

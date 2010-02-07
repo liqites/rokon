@@ -91,6 +91,14 @@ public class GLHelper {
 			_dstBlendMode = dstBlendMode;
 		}
 	}
+	
+	public static void blendMode(BlendFunction blendFunction) {
+		if(blendFunction.getSrc() != _srcBlendMode || blendFunction.getDst() != _dstBlendMode) {
+			_gl.glBlendFunc(blendFunction.getSrc(), blendFunction.getDst());
+			_srcBlendMode = blendFunction.getSrc();
+			_dstBlendMode = blendFunction.getDst();
+		}
+	}
 
     public static void color4f(float red, float green, float blue, float alpha) {
         if(alpha != _glColor4fAlpha || red != _glColor4fRed || green != _glColor4fGreen || blue != _glColor4fBlue) {

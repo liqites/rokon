@@ -33,7 +33,6 @@ public class VBOManager {
         gl.glBindBuffer(GL11.GL_ELEMENT_ARRAY_BUFFER, 0);
         _requiresLoading = false;
         Debug.print("Loading " + count + " VBOs");
-		Rokon.vboLoadComplete();
 	}
 	
 	public static void reload() {

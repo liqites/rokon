@@ -123,6 +123,18 @@ public class TextureManager {
 		Debug.warning("TextureAtlas remove queue is full max=" + Constants.MAX_TEXTURE_ATLAS_COUNT);
 	}
 	
+	public static void removeAll() {
+		_hasRemoveQueue = true;
+		_hasLoadQueue = false;
+		_hasChangeQueue = false;
+		for(i = 0; i < _loadQueue.length; i++) {
+			_removeQueue[i] =_active[i];
+			_loadQueue[i] = null;
+			_changeQueue[i] = null;
+			_active[i] = null;
+		}
+	}
+	
 	/**
 	 * Marks a TextureAtlas for change, in that the options must be reloaded onto the hardware - these are set by various methods in TextureAtlas, this must be called afterwards
 	 * @param textureAtlas
@@ -217,7 +229,6 @@ public class TextureManager {
 		Debug.print("Texture Loading Complete");
 		_hasLoadQueue = false;
 		System.gc();
-		Rokon.textureLoadComplete();
 	}
 	
 	/**

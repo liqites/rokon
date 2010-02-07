@@ -16,6 +16,9 @@ public class Sprite extends Entity {
 	private VBO _vertexVBO;
 	private BufferObject _buffer;
 	
+	private BlendFunction _blendFunction;
+	private boolean _hasCustomBlendFunction;
+	
 	private float _red = 1, _green = 1, _blue = 1, _alpha = 1;
 	
 	public Sprite(int x, int y, int width, int height) {
@@ -121,20 +124,41 @@ public class Sprite extends Entity {
 	
 	private void onDrawNormal(GL10 gl) {
 		GLHelper.color4f(_red, _green, _blue, _alpha);
+		if(_hasCustomBlendFunction)
+			GLHelper.blendMode(_blendFunction);
+		else
+			GLHelper.blendMode(Rokon.getDefaultBlendFunction());
 		gl.glPushMatrix();		
 		GLHelper.enableVertexArray();
 		GLHelper.vertexPointer(_buffer.get(), GL10.GL_FIXED);
 		gl.glTranslatex(getX(), getY(), 0);
 		if(getRotationAngle() != 0) {
-			gl.glPushMatrix();
 			if(isRotateAboutCentre()) {
-				//gl.glTranslatex(getX() + (int)(getWidth() / 2), getY() + (int)(getHeight() / 2), 0);
+				if(isScaleFromCentre())
+					gl.glTranslatex((int)(getWidth() * getScaleX() / 2) - (int)((getWidth() * (getScaleX() - 1)) / 2), (int)(getHeight() * getScaleY() / 2) - (int)((getHeight() * (getScaleY() - 1)) / 2), 0);
+				else
+					gl.glTranslatex((int)(getWidth() * getScaleX() / 2), (int)(getHeight() * getScaleY() / 2), 0);
 				gl.glRotatex(getRotationAngle(), 0, 0, 0x10000);
+				if(isScaleFromCentre())
+					gl.glTranslatex(-(int)(getWidth() * getScaleX() / 2) + (int)((getWidth() * (getScaleX() - 1)) / 2), -(int)(getHeight() * getScaleY() / 2) + (int)((getHeight() * (getScaleY() - 1)) / 2), 0);
+					else
+					gl.glTranslatex(-(int)(getWidth() * getScaleX() / 2), -(int)(getHeight() * getScaleY() / 2), 0);
 			} else {
-				//gl.glTranslatex(getX() + getRotationPivotX(), getRotationPivotY(), 0);
+				if(isScaleFromCentre())
+					gl.glTranslatex(getRotationPivotX() - (int)((getWidth() * (getScaleX() - 1)) / 2), getRotationPivotY() - (int)((getHeight() * (getScaleY() - 1)) / 2), 0);
+				else
+					gl.glTranslatex(getRotationPivotX(), getRotationPivotY(), 0);
 				gl.glRotatex(getRotationAngle(), 0, 0, 0x10000);
+				if(isScaleFromCentre())
+					gl.glTranslatex(-getRotationPivotX() + (int)((getWidth() * (getScaleX() - 1)) / 2), -getRotationPivotY() + (int)((getHeight() * (getScaleY() - 1)) / 2), 0);
+				else
+					gl.glTranslatex(-getRotationPivotX(), -getRotationPivotY(), 0);
 			}
-			gl.glPopMatrix();
+		}
+		if(getScaleX() != 1 || getScaleY() != 1) {
+			if(isScaleFromCentre())
+				gl.glTranslatex(-(int)((getWidth() * (getScaleX() - 1)) / 2), -(int)((getHeight() * (getScaleY() - 1)) / 2), 0);
+			gl.glScalef(getScaleX(), getScaleY(), 0);
 		}
 		if(_hasTexture) {
 			GLHelper.enableTextures();

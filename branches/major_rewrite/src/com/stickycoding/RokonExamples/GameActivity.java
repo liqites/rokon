@@ -19,7 +19,6 @@ public class GameActivity extends Rokon {
 		setAudioPath("audio/");
 		setLoadingScreen("loading_screen.png");
 		setDrawPriority(DRAW_PRIORITY_NORMAL);
-		//useThreadedGameLoop();
 		showFps();
 		createEngine();
 	}
@@ -39,11 +38,11 @@ public class GameActivity extends Rokon {
 
 		public MyScene() {
 			super();
-			sprite = new Sprite(10 * Rokon.fixedPointUnit, 10 * Rokon.fixedPointUnit, 50 * Rokon.fixedPointUnit, 50 * Rokon.fixedPointUnit);
+			sprite = new Sprite(100 * Rokon.fixedPointUnit, 100 * Rokon.fixedPointUnit, 50 * Rokon.fixedPointUnit, 50 * Rokon.fixedPointUnit);
 			//Sprite sprite = new Sprite(10, 10, 50, 50);
 			
 			atlas = new TextureAtlas(512, 512);
-			atlas.insert(texture = new Texture("graphics/face.png"));
+			atlas.insert(texture = new Texture("face.png"));
 			TextureManager.load(atlas);
 			
 			sprite.setTexture(texture);
@@ -54,17 +53,25 @@ public class GameActivity extends Rokon {
 		boolean down = false;
 		
 		public void onTouchDown(int x, int y, MotionEvent event) { 
-			sprite.setVelX(50 * Rokon.fixedPointUnit);
+			//sprite.scaleFromCentre(sprite.getScaleX() + 0.2f, sprite.getScaleY() + 0.1f);
 			down = true;
+			Debug.print("Pressed down");
+			Rokon.pauseGame();
 		}
 		public void onTouchMove(int x, int y, MotionEvent event) { }
 		public void onTouchUp(int x, int y, MotionEvent event) { 
-			sprite.setVelX(0);
+			//sprite.setVelX(0);
 			down = false;
+			Rokon.unpauseGame();
+			Debug.print("Up");
 		}
 		
 		public void onGameLoop() {
+			Debug.print("GT=" + Rokon.time);
 			sprite.rotate(1 * Rokon.fixedPointUnit);
+			if(down) {
+				sprite.scaleFromCentre(sprite.getScaleX() + 0.01f, sprite.getScaleY() + 0.01f);
+			}
 		}
 		
 	}

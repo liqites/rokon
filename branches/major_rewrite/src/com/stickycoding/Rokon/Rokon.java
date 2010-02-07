@@ -18,7 +18,7 @@ public class Rokon extends Activity {
 	public static final int DRAW_PRIORITY_DRAWTEX_NORMAL = 2;
 	public static final int DRAW_PRIORITY_DRAWTEX_VBO = 3;
 	
-	public static long time, previousTime, pauseTime, timeDifference;
+	public static long realTime, time, previousTime, pauseTime, timeDifference;
 	public static int timeModifier;
 	
 	protected static Rokon rokon;
@@ -26,6 +26,8 @@ public class Rokon extends Activity {
 	public static int fixedPointUnit = 0x10000;
 	
 	public static long prevLoopTime, prevDrawTime, loopTime, drawTime;
+	private static boolean _paused;
+	private static long _pauseOnTime;
 	
 	private long _fpsStart, _loopStart;
 	private int _fpsCount, _loopCount;
@@ -51,7 +53,7 @@ public class Rokon extends Activity {
 	private static float _gameWidth, _gameHeight;
 	private static int _defaultLayerCount = 1, _defaultMaxEntityCount = 10;
 	
-	private static boolean _waitingForTextures, _waitingForVBO;
+	private static BlendFunction _blendFunction;
 	
 	public void onCreate() { }
 	public void onLoad() { }
@@ -69,12 +71,38 @@ public class Rokon extends Activity {
 	public void onResume() {
 		super.onResume();
 		startGameLoop();
+		if(_hasScene)
+			_scene.onResume();
 	}
 	
 	@Override
 	public void onPause() {
 		super.onPause();
 		_endGameThread = true;
+		pauseGame();
+		if(_hasScene)
+			_scene.onPause();
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if(_hasScene)
+			_scene.onDestroy();
+	}
+	
+	public static void pauseGame() {
+		_paused = true;
+		_pauseOnTime = time;
+	}
+	
+	public static void unpauseGame() {
+		_paused = false;
+		pauseTime = realTime - _pauseOnTime;
+	}
+	
+	public static boolean isPaused() {
+		return _paused;
 	}
 	
 	@Override
@@ -242,6 +270,7 @@ public class Rokon extends Activity {
 	protected void prepareEngine() {
 		VBOManager.reload();
 		TextureManager.reload();
+		_blendFunction = new BlendFunction(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		System.gc();
 	}
 	
@@ -253,6 +282,10 @@ public class Rokon extends Activity {
 		_isLoading = isLoading;
 	}
 	
+	protected static BlendFunction getDefaultBlendFunction() {
+		return _blendFunction;
+	}
+	
 	protected void onDraw(GL10 gl) {
 		TextureManager.updateTextures(gl);
 		
@@ -260,9 +293,13 @@ public class Rokon extends Activity {
 			VBOManager.loadBuffers((GL11)gl);
 
 		previousTime = time;
-		time = System.currentTimeMillis() - pauseTime;
-		timeDifference = time - previousTime;
-		timeModifier = (int)(((float)timeDifference / 1000f) * fixedPointUnit);
+		realTime = System.currentTimeMillis();
+		
+		if(!_paused) {
+			time = realTime - pauseTime;
+			timeDifference = time - previousTime;
+			timeModifier = (int)(((float)timeDifference / 1000f) * fixedPointUnit);
+		}
 		
 		if(_hasScene) {
 			if(!_threadedGameLoop)
@@ -358,14 +395,6 @@ public class Rokon extends Activity {
 	
 	public static void setFixedPointUnit(int fixedPointUnit) {
 		Rokon.fixedPointUnit = fixedPointUnit;
-	}
-	
-	protected static void vboLoadComplete() {
-		_waitingForVBO = false;
-	}
-	
-	protected static void textureLoadComplete() {
-		_waitingForTextures = false;
 	}
 	
 	public static boolean usingVBO() {

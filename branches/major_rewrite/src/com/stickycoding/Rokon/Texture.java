@@ -119,7 +119,7 @@ public class Texture {
 		switch(_textureType.getType()) {
 			case TextureType.ASSET:
 				try {
-					bmp = BitmapFactory.decodeStream(Rokon.rokon.getAssets().open(_textureType.getAssetPath()));
+					bmp = BitmapFactory.decodeStream(Rokon.rokon.getAssets().open(Rokon.getTexturePath() + _textureType.getAssetPath()));
 					return bmp;
 				} catch (IOException e) {
 					Debug.warning("Texture asset not found, " + _textureType.getAssetPath());
@@ -145,7 +145,7 @@ public class Texture {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		opts.inJustDecodeBounds = true;
 		try {
-			BitmapFactory.decodeStream(Rokon.rokon.getAssets().open(_textureType.getAssetPath()), null, opts);
+			BitmapFactory.decodeStream(Rokon.rokon.getAssets().open(Rokon.getTexturePath() + _textureType.getAssetPath()), null, opts);
 		} catch (IOException e) { 
 			Debug.warning("Texture asset not found, " + assetPath);
 		}
@@ -281,4 +281,5 @@ public class Texture {
 	    _tileRows = _height / tileHeight;
 		prepareBuffers();
     }
+    
 }
