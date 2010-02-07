@@ -3,6 +3,7 @@ package com.stickycoding.RokonExamples;
 import android.view.MotionEvent;
 
 import com.stickycoding.Rokon.Debug;
+import com.stickycoding.Rokon.Entity;
 import com.stickycoding.Rokon.Rokon;
 import com.stickycoding.Rokon.Scene;
 import com.stickycoding.Rokon.Sprite;
@@ -19,7 +20,6 @@ public class GameActivity extends Rokon {
 		setAudioPath("audio/");
 		setLoadingScreen("loading_screen.png");
 		setDrawPriority(DRAW_PRIORITY_NORMAL);
-		showFps();
 		createEngine();
 	}
 	
@@ -43,23 +43,26 @@ public class GameActivity extends Rokon {
 			
 			atlas = new TextureAtlas(512, 512);
 			atlas.insert(texture = new Texture("face.png"));
-			TextureManager.load(atlas);
+			
+			addTextureAtlas(atlas);
 			
 			sprite.setTexture(texture);
+			
+			checkForTouchables(true);
 			
 			add(sprite);
 		}
 		
 		boolean down = false;
 		
-		public void onTouchDown(int x, int y, MotionEvent event) { 
+		public void onTouchDown(Entity entity, int x, int y, MotionEvent event) { 
 			//sprite.scaleFromCentre(sprite.getScaleX() + 0.2f, sprite.getScaleY() + 0.1f);
 			down = true;
 			Debug.print("Pressed down");
 			Rokon.pauseGame();
 		}
 		public void onTouchMove(int x, int y, MotionEvent event) { }
-		public void onTouchUp(int x, int y, MotionEvent event) { 
+		public void onTouchUp(Entity entity, int x, int y, MotionEvent event) { 
 			//sprite.setVelX(0);
 			down = false;
 			Rokon.unpauseGame();
@@ -67,7 +70,6 @@ public class GameActivity extends Rokon {
 		}
 		
 		public void onGameLoop() {
-			Debug.print("GT=" + Rokon.time);
 			sprite.rotate(1 * Rokon.fixedPointUnit);
 			if(down) {
 				sprite.scaleFromCentre(sprite.getScaleX() + 0.01f, sprite.getScaleY() + 0.01f);

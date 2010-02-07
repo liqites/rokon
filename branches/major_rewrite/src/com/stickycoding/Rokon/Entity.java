@@ -11,10 +11,14 @@ public class Entity {
 	private int _rotationAngle, _rotationPivotX, _rotationPivotY;
 	private boolean _rotateAboutCentre = true;
 	
+	private int _id = -1;
+	
 	private float _scaleX = 1, _scaleY = 1;
 	private boolean _scaleFromCentre;
 		
 	private boolean _requiresPositionUpdate;
+	
+	private int _touchBorder = 0;
 	
 	public void remove() {
 		_dead = true;
@@ -230,5 +234,21 @@ public class Entity {
 	public boolean isScaleFromCentre() {
 		return _scaleFromCentre;
 	}
+	
+	public void setId(int id) {
+		_id = id;
+	}
 
+	public int getId() {
+		return _id;
+	}
+	
+	public int getTouchBorder() {
+		return _touchBorder;
+	}
+	
+	public void setTouchBorder(int border) {
+		_touchBorder = border;
+	}
+	
 }

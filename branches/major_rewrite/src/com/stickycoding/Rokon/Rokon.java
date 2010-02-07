@@ -23,6 +23,8 @@ public class Rokon extends Activity {
 	
 	protected static Rokon rokon;
 	
+	public static int lastTouchX, lastTouchY;
+	
 	public static int fixedPointUnit = 0x10000;
 	
 	public static long prevLoopTime, prevDrawTime, loopTime, drawTime;
@@ -37,7 +39,6 @@ public class Rokon extends Activity {
 	private RokonSurfaceView _surfaceView;
 	
 	private Scene _scene;
-	private boolean _hasScene;
 	
 	private static boolean _supportVBO, _supportDrawTex;
 	private static boolean _useVBO, _useDrawTex;
@@ -55,6 +56,8 @@ public class Rokon extends Activity {
 	
 	private static BlendFunction _blendFunction;
 	
+	private static boolean _frozen;
+	
 	public void onCreate() { }
 	public void onLoad() { }
 	public void onLoadComplete() { }
@@ -70,8 +73,9 @@ public class Rokon extends Activity {
 	@Override
 	public void onResume() {
 		super.onResume();
+		rokon = this;
 		startGameLoop();
-		if(_hasScene)
+		if(_scene != null)
 			_scene.onResume();
 	}
 	
@@ -80,14 +84,14 @@ public class Rokon extends Activity {
 		super.onPause();
 		_endGameThread = true;
 		pauseGame();
-		if(_hasScene)
+		if(_scene != null)
 			_scene.onPause();
 	}
 	
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		if(_hasScene)
+		if(_scene != null)
 			_scene.onDestroy();
 	}
 	
@@ -107,18 +111,10 @@ public class Rokon extends Activity {
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		if(_hasScene) {
-			switch(event.getAction()) {
-			case MotionEvent.ACTION_DOWN:
-				_scene.onTouchDown((int)((event.getX() / DeviceScreen.getDisplayMetrics().widthPixels) * _gameWidth * fixedPointUnit), (int)((event.getY() / DeviceScreen.getDisplayMetrics().heightPixels) * _gameHeight * fixedPointUnit), event);
-				break;
-			case MotionEvent.ACTION_MOVE:
-				_scene.onTouchMove((int)((event.getX() / DeviceScreen.getDisplayMetrics().widthPixels) * _gameWidth * fixedPointUnit), (int)((event.getY() / DeviceScreen.getDisplayMetrics().heightPixels) * _gameHeight * fixedPointUnit), event);
-				break;
-			case MotionEvent.ACTION_UP:
-				_scene.onTouchUp((int)((event.getX() / DeviceScreen.getDisplayMetrics().widthPixels) * _gameWidth * fixedPointUnit), (int)((event.getY() / DeviceScreen.getDisplayMetrics().heightPixels) * _gameHeight * fixedPointUnit), event);
-				break;
-			}
+		if(_scene != null) {
+			lastTouchX = (int)((event.getX() / DeviceScreen.getDisplayMetrics().widthPixels) * _gameWidth * fixedPointUnit);
+			lastTouchY = (int)((event.getY() / DeviceScreen.getDisplayMetrics().heightPixels) * _gameHeight * fixedPointUnit);
+			_scene.handleTouch(lastTouchX, lastTouchY, event);
 		}
 		try {
 			Thread.sleep(16);
@@ -128,16 +124,15 @@ public class Rokon extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if(_scene != null)
+			_scene.handleKeyDown(keyCode, event);
 		return super.onKeyDown(keyCode, event);
-	}
-	
-	@Override
-	public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
-		return super.onKeyMultiple(keyCode, repeatCount, event);
-	}
+	}	
 	
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
+		if(_scene != null)
+			_scene.handleKeyUp(keyCode, event);
 		return super.onKeyUp(keyCode, event);
 	}
 	
@@ -155,16 +150,19 @@ public class Rokon extends Activity {
 	}
 	
 	public void setScene(Scene scene) {
+		Rokon.freeze();
+		if(_scene != null) {
+			_scene.destroyScene();
+			_scene.onSceneExit();
+			scene.loadScene(_scene.destroyScene());
+		} else
+			scene.loadScene(new Bundle());
 		_scene = scene;
-		_hasScene = (scene != null);
+		Rokon.unfreeze();
 	}
 	
 	public Scene getScene() {
 		return _scene;
-	}
-	
-	public boolean hasScene() {
-		return _hasScene;
 	}
 	
 	public void removeScene() {
@@ -287,21 +285,23 @@ public class Rokon extends Activity {
 	}
 	
 	protected void onDraw(GL10 gl) {
-		TextureManager.updateTextures(gl);
-		
-		if(_useVBO)
-			VBOManager.loadBuffers((GL11)gl);
+		if(_scene != null) {
+			while(_frozen);
+			
+			TextureManager.updateTextures(gl);
+			
+			if(_useVBO)
+				VBOManager.loadBuffers((GL11)gl);
 
-		previousTime = time;
-		realTime = System.currentTimeMillis();
-		
-		if(!_paused) {
-			time = realTime - pauseTime;
-			timeDifference = time - previousTime;
-			timeModifier = (int)(((float)timeDifference / 1000f) * fixedPointUnit);
-		}
-		
-		if(_hasScene) {
+			previousTime = time;
+			realTime = System.currentTimeMillis();
+			
+			if(!_paused) {
+				time = realTime - pauseTime;
+				timeDifference = time - previousTime;
+				timeModifier = (int)(((float)timeDifference / 1000f) * fixedPointUnit);
+			}
+			
 			if(!_threadedGameLoop)
 				_scene.onGameLoop();
 
@@ -334,7 +334,7 @@ public class Rokon extends Activity {
 			new Thread(new Runnable() {
 				public void run() {
 					while(!_endGameThread) {
-						if(_hasScene) {
+						if(_scene != null) {
 							_scene.onGameLoop();
 							prevLoopTime = loopTime;
 							loopTime = System.currentTimeMillis();
@@ -413,5 +413,15 @@ public class Rokon extends Activity {
 		return _defaultMaxEntityCount;
 	}
 	
+	public static void freeze() {
+		_frozen = true;
+	}
 	
+	public static void unfreeze() {
+		_frozen = false;
+	}
+	
+	public static boolean isFrozen() {
+		return _frozen;
+	}
 }
