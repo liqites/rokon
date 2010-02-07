@@ -21,6 +21,7 @@ public class GameActivity extends Rokon {
 		setAudioPath("audio/");
 		setLoadingScreen("loading_screen.png");
 		setDrawPriority(DRAW_PRIORITY_NORMAL);
+		showFps();
 		createEngine();
 	}
 	
@@ -52,6 +53,8 @@ public class GameActivity extends Rokon {
 			checkForTouchables(true);
 			
 			add(sprite);
+			
+			setChildScene(new MainMenu(), false);
 		}
 		
 		boolean down = false;
@@ -59,13 +62,11 @@ public class GameActivity extends Rokon {
 		public void onTouchDown(int x, int y, MotionEvent event) { 
 			//sprite.scaleFromCentre(sprite.getScaleX() + 0.2f, sprite.getScaleY() + 0.1f);
 			down = true;
-			Rokon.pauseGame();
 		}
 		public void onTouchMove(int x, int y, MotionEvent event) { }
 		public void onTouchUp(int x, int y, MotionEvent event) { 
 			down = false;
 			sprite.scale(FP.ONE, FP.ONE);
-			Rokon.unpauseGame();
 		}
 		
 		public void onGameLoop() {

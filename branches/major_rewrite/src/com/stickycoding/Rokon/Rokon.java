@@ -301,7 +301,7 @@ public class Rokon extends Activity {
 			}
 			
 			if(!_threadedGameLoop)
-				_scene.onGameLoop();
+				_scene.handleGameLoop();
 
 			gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 	        gl.glMatrixMode(GL10.GL_MODELVIEW);
@@ -333,7 +333,7 @@ public class Rokon extends Activity {
 				public void run() {
 					while(!_endGameThread) {
 						if(_scene != null) {
-							_scene.onGameLoop();
+							_scene.handleGameLoop();
 							prevLoopTime = loopTime;
 							loopTime = System.currentTimeMillis();
 							_loopCount++;

@@ -162,7 +162,6 @@ public class Sprite extends Entity {
 		if(getScaleX() != FP.ONE || getScaleY() != FP.ONE) {
 			if(isScaleFromCentre())
 				gl.glTranslatex(-FP.div(FP.mul(getWidth(), getScaleX() - FP.ONE), FP.TWO), -FP.div(FP.mul(getHeight(), getScaleY() - FP.ONE), FP.TWO), 0);
-			Debug.print("w=" + getWidth() + " sx=" + getScaleX() + " sxf=" + (getScaleX() - FP.ONE) +" m=" + FP.mul(getWidth(), getScaleX() - FP.ONE));
 			gl.glScalex(getScaleX(), getScaleY(), 0);
 		}
 		if(_hasTexture) {

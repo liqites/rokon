@@ -157,9 +157,12 @@ public class Scene {
 	protected void loadScene(Bundle incomingBundle) {
 		lastBundle = incomingBundle;
 		thisBundle = new Bundle();
-		TextureManager.removeAll();
-		for (Iterator<TextureAtlas> it = _textureAtlas.iterator(); it.hasNext(); )
-			TextureManager.load(it.next());
+		for (Iterator<TextureAtlas> it = _textureAtlas.iterator(); it.hasNext(); ) {
+			TextureAtlas atlas = it.next();
+			if(!atlas.isOnHardware()) {
+				TextureManager.load(atlas);
+			}
+		}
 		onSceneLoad(thisBundle);
 		System.gc();
 	}
@@ -287,6 +290,7 @@ public class Scene {
 		_childScene = scene;
 		_childSceneModal = modal;
 		_childScene.setParent(this);
+		_childScene.loadScene(thisBundle);
 		_hasChildScene = true;
 	}
 	
@@ -338,6 +342,15 @@ public class Scene {
 			_parentScene.childClosed();
 			destroyScene();
 		}
+	}
+	
+	protected void handleGameLoop() {
+		if(_hasChildScene) {
+			_childScene.handleGameLoop();
+			if(_childSceneModal)
+				return;
+		}
+		onGameLoop();
 	}
 
 }
