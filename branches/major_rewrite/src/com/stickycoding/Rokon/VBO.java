@@ -12,6 +12,19 @@ public class VBO {
 	private int _index = -1;
 	private int _drawType = GL11.GL_STATIC_DRAW;
 	private boolean _added;
+	private Buffer _buffer;
+	
+	public VBO(ByteBuffer byteBuffer) {
+		setByteBuffer(byteBuffer);
+	}
+	
+	public VBO(IntBuffer intBuffer) {
+		setIntBuffer(intBuffer);
+	}
+	
+	public void setIntBuffer(IntBuffer intBuffer) {
+		_buffer = intBuffer;
+	}
 	
 	protected void setIndex(int index) {
 		_index = index;
@@ -41,10 +54,14 @@ public class VBO {
 		_added = false;
 	}
 	
-	public Buffer getBuffer() { return null; }
-	public IntBuffer getIntBuffer() { return null; }
-	public ByteBuffer getByteBuffer() { return null; }
-	public FloatBuffer getFloatBuffer() { return null; }
-	public int getSize() { return 0; }
+	public void setByteBuffer(ByteBuffer byteBuffer) {
+		_buffer = byteBuffer;
+	}
+	
+	public Buffer getBuffer() { return _buffer; }
+	public IntBuffer getIntBuffer() { return (IntBuffer)_buffer; }
+	public ByteBuffer getByteBuffer() { return (ByteBuffer)_buffer; }
+	public FloatBuffer getFloatBuffer() { return (FloatBuffer)_buffer; }
+	public int getSize() { return _buffer.capacity(); }
 
 }

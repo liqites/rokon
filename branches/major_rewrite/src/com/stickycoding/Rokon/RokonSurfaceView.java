@@ -17,11 +17,11 @@ public class RokonSurfaceView extends GLSurfaceView {
 	}
 
     public boolean onTouchEvent(final MotionEvent event) {
-        queueEvent(new Runnable() {
-			public void run() {
+        //queueEvent(new Runnable() {
+		//	public void run() {
 				_rokon.onTouchEvent(event);
-			}
-        });
+		//	}
+        //});
         try {
         	Thread.sleep(16);
         } catch (Exception e) { }

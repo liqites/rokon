@@ -22,6 +22,8 @@ public class Texture {
 	private TextureAtlas _textureAtlas;
 	private boolean _flipped;
 	
+	private TextureBuffer[] _textureBuffer;
+	
 	public void setAtlasX(int x) {
 		_atlasX = x;
 	}
@@ -199,6 +201,27 @@ public class Texture {
 		_flipped = flipped;
 	}
 	
+	private void prepareBuffers() {
+		int bufferCount = _tileCols * _tileRows;
+		_textureBuffer = new TextureBuffer[bufferCount];
+		for(int i = 0; i < bufferCount; i++) {
+			_textureBuffer[i] = new TextureBuffer(this);
+		}
+	}
+	
+	public TextureBuffer getTextureBuffer(int index) {
+		return _textureBuffer[index];
+	}
+	
+	public TextureBuffer getTextureBuffer() {
+		return _textureBuffer[0];
+	}
+	
+	
+	public int getTileCount() {
+		return _tileCols * _tileRows;
+	}
+	
 	/**
 	 * Creates a Texture with no set image or dimensions
 	 */
@@ -236,6 +259,7 @@ public class Texture {
 		_tileRows = rows;
 		_tileWidth = _width / columns;
 		_tileHeight = _height / rows;
+		prepareBuffers();
 	}
 	
 	/**
@@ -244,6 +268,7 @@ public class Texture {
 	 */
 	public void setTextureAtlas(TextureAtlas textureAtlas) {
 		_textureAtlas = textureAtlas;
+		prepareBuffers();
 	}
 
     /**
@@ -254,5 +279,6 @@ public class Texture {
     public void setTileSize(int tileWidth, int tileHeight) {
     	_tileCols = _width / tileWidth;
 	    _tileRows = _height / tileHeight;
+		prepareBuffers();
     }
 }

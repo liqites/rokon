@@ -7,7 +7,7 @@ import android.view.MotionEvent;
 
 public class Scene {
 	
-	private Rokon _rokon;
+	public Rokon rokon;
 	private Background _background;
 	private boolean _hasBackground;
 	private int _layerCount, _maxEntityCount;
@@ -38,8 +38,8 @@ public class Scene {
 	public void onKeyPress(int keyCode, KeyEvent event) { }
 	public void onKeyUp(int keyCode, KeyEvent event) { }
 	
-	protected Scene(Rokon rokon, int layerCount, int maxEntityCount) {
-		_rokon = rokon;
+	protected Scene(int layerCount, int maxEntityCount) {
+		rokon = Rokon.rokon;
 		_layerCount = layerCount;
 		_maxEntityCount = maxEntityCount;
 		_entity = new Entity[_layerCount][];
@@ -48,7 +48,7 @@ public class Scene {
 	}
 	
 	public Scene() {
-		Debug.error("Scene must be created through Rokon.createScene");
+		this(Rokon.getDefaultLayerCount(), Rokon.getDefaultMaxEntityCount());
 	}
 	
 	public int getMaxEntityCount() { 
@@ -60,7 +60,7 @@ public class Scene {
 	}
 	
 	public Rokon getRokon() {
-		return _rokon;
+		return rokon;
 	}
 	
 	public void add(Entity entity, int layer) {
@@ -118,8 +118,10 @@ public class Scene {
 		for(int i = 0; i < _layerCount; i++) {
 			onPreDraw(gl, i);
 			for(int j = 0; j < _maxEntityCount; j++)
-				if(_entity[i][j] != null)
+				if(_entity[i][j] != null) {
+					_entity[i][j].onUpdate();
 					_entity[i][j].onDraw(gl);
+				}
 			onPostDraw(gl, i);
 		}
 		onPostDraw(gl);

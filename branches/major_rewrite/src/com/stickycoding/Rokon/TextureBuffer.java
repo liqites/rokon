@@ -14,6 +14,7 @@ public class TextureBuffer {
 	private ByteBuffer _buffer;
 	private Texture _texture;
 	private int _tileX, _tileY;
+	private VBO _vbo;
 	
 	public TextureBuffer(Texture texture) {
 		setTexture(texture);
@@ -41,6 +42,9 @@ public class TextureBuffer {
 	
 	private float _x1, _y1, _x2, _y2, xs, ys;
 	public void update() {
+		if(_texture.getTextureAtlas() == null)
+			return;
+		
 		_x1 = _texture.getAtlasX();
 		_y1 = _texture.getAtlasY();
 		_x2 = _texture.getAtlasX() + _texture.getWidth();
@@ -65,6 +69,11 @@ public class TextureBuffer {
 		_buffer.putFloat(_x1); _buffer.putFloat(_y2);
 		_buffer.putFloat(_x2); _buffer.putFloat(_y2);		
 		_buffer.position(0);
+		
+		if(Rokon.usingVBO()) {
+			_vbo = new VBO(_buffer);
+			VBOManager.add(_vbo);
+		}
 	}
 
 }

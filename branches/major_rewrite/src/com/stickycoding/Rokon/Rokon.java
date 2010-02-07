@@ -14,14 +14,12 @@ import android.view.WindowManager;
 public class Rokon extends Activity {
 	
 	public static final int DRAW_PRIORITY_NORMAL = 0;
-	public static final int DRAW_PRIORITY_VBO_NORMAL = 1;
-	public static final int DRAW_PRIORITY_VBO_DRAWTEX_NORMAL = 2;
-	public static final int DRAW_PRIORITY_DRAWTEX_NORMAL = 3;
-	public static final int DRAW_PRIORITY_DRAWTEX_VBO_NORMAL = 4;
+	public static final int DRAW_PRIORITY_VBO = 1;
+	public static final int DRAW_PRIORITY_DRAWTEX_NORMAL = 2;
+	public static final int DRAW_PRIORITY_DRAWTEX_VBO = 3;
 	
 	public static long time, previousTime, pauseTime, timeDifference;
 	public static int timeModifier;
-	public static float timeModifierf;
 	
 	protected static Rokon rokon;
 	
@@ -49,9 +47,9 @@ public class Rokon extends Activity {
 	
 	private static int _drawPriority;
 	
-	private static boolean _threadedGameLoop = false, _screenSpecificDirectories, _landscape, _fixedPoints, _showFps;
-	private static int _gameWidth, _gameHeight;
-	private int _defaultLayerCount = 1, _defaultMaxEntityCount = 10;
+	private static boolean _threadedGameLoop = false, _screenSpecificDirectories, _landscape, _showFps;
+	private static float _gameWidth, _gameHeight;
+	private static int _defaultLayerCount = 1, _defaultMaxEntityCount = 10;
 	
 	private static boolean _waitingForTextures, _waitingForVBO;
 	
@@ -82,9 +80,22 @@ public class Rokon extends Activity {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if(_hasScene) {
-			
+			switch(event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				_scene.onTouchDown((int)((event.getX() / DeviceScreen.getDisplayMetrics().widthPixels) * _gameWidth * fixedPointUnit), (int)((event.getY() / DeviceScreen.getDisplayMetrics().heightPixels) * _gameHeight * fixedPointUnit), event);
+				break;
+			case MotionEvent.ACTION_MOVE:
+				_scene.onTouchMove((int)((event.getX() / DeviceScreen.getDisplayMetrics().widthPixels) * _gameWidth * fixedPointUnit), (int)((event.getY() / DeviceScreen.getDisplayMetrics().heightPixels) * _gameHeight * fixedPointUnit), event);
+				break;
+			case MotionEvent.ACTION_UP:
+				_scene.onTouchUp((int)((event.getX() / DeviceScreen.getDisplayMetrics().widthPixels) * _gameWidth * fixedPointUnit), (int)((event.getY() / DeviceScreen.getDisplayMetrics().heightPixels) * _gameHeight * fixedPointUnit), event);
+				break;
+			}
 		}
-		return super.onTouchEvent(event);
+		try {
+			Thread.sleep(16);
+		} catch (Exception e) { }
+		return false;
 	}
 	
 	@Override
@@ -105,14 +116,6 @@ public class Rokon extends Activity {
 	public void setGameSize(int gameWidth, int gameHeight) {
 		_gameWidth = gameWidth;
 		_gameHeight = gameHeight;
-	}
-	
-	public Scene createScene() {
-		return new Scene(this, _defaultLayerCount, _defaultMaxEntityCount);
-	}
-	
-	public Scene createScene(int layerCount, int maxEntityCount) {
-		return new Scene(this, layerCount, maxEntityCount);
 	}
 	
 	public void setDefaultLayerCount(int defaultLayerCount) {
@@ -197,22 +200,6 @@ public class Rokon extends Activity {
 		return _landscape;
 	}
 	
-	public void useFixedPoints(boolean useHelper) {
-		_fixedPoints = true;
-	}
-	
-	public static boolean isFixedPoints() {
-		return _fixedPoints;
-	}
-	
-	public void useFloatingPoints() {
-		_fixedPoints = false;
-	}
-	
-	public static boolean isFloatingPoints() {
-		return !_fixedPoints;
-	}
-	
 	public void showFps() {
 		_showFps = true;
 	}
@@ -225,11 +212,11 @@ public class Rokon extends Activity {
 		_showFps = !_showFps;
 	}
 	
-	public static int getGameWidth() {
+	public static float getGameWidth() {
 		return _gameWidth;
 	}
 	
-	public static int getGameHeight() {
+	public static float getGameHeight() {
 		return _gameHeight;
 	}
 	
@@ -240,6 +227,7 @@ public class Rokon extends Activity {
         if(_landscape)
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 		DeviceScreen.determine(this);		
+		TextureManager.prepare();
 		_surfaceView = new RokonSurfaceView(this);
 		setContentView(_surfaceView);
 		if(!_hasLoadingScreen) {
@@ -254,6 +242,7 @@ public class Rokon extends Activity {
 	protected void prepareEngine() {
 		VBOManager.reload();
 		TextureManager.reload();
+		System.gc();
 	}
 	
 	protected static boolean isLoading() {
@@ -273,11 +262,7 @@ public class Rokon extends Activity {
 		previousTime = time;
 		time = System.currentTimeMillis() - pauseTime;
 		timeDifference = time - previousTime;
-		
-		if(_fixedPoints)
-			timeModifier = (int)(fixedPointUnit * (timeDifference / 1000));
-		else
-			timeModifierf = timeDifference / 1000f;
+		timeModifier = (int)(((float)timeDifference / 1000f) * fixedPointUnit);
 		
 		if(_hasScene) {
 			if(!_threadedGameLoop)
@@ -306,6 +291,7 @@ public class Rokon extends Activity {
 		if(_hasGameThread)
 			return;
 		if(_threadedGameLoop) {
+			Debug.print("Starting Threaded Game Loop");
 			_hasGameThread = true;
 			_endGameThread = false;
 			new Thread(new Runnable() {
@@ -338,17 +324,17 @@ public class Rokon extends Activity {
 			_useDrawTex = true;
 			_useVBO = false;
 			break;
-		case DRAW_PRIORITY_DRAWTEX_VBO_NORMAL:
+		case DRAW_PRIORITY_DRAWTEX_VBO:
 			_useDrawTex = true;
 			_useVBO = true;
 			break;
-		case DRAW_PRIORITY_VBO_DRAWTEX_NORMAL:
-			_useVBO = true;
-			_useDrawTex = true;
+		case DRAW_PRIORITY_NORMAL:
+			_useVBO = false;
+			_useDrawTex = false;
 			break;
-		case DRAW_PRIORITY_VBO_NORMAL:
+		case DRAW_PRIORITY_VBO:
 			_useVBO = true;
-			_useDrawTex =false;
+			_useDrawTex = false;
 			break;
 		}
 	}
@@ -389,5 +375,14 @@ public class Rokon extends Activity {
 	public static boolean usingDrawTex() {
 		return _useDrawTex;
 	}
+	
+	public static int getDefaultLayerCount() {
+		return _defaultLayerCount;
+	}
+	
+	public static int getDefaultMaxEntityCount() {
+		return _defaultMaxEntityCount;
+	}
+	
 	
 }

@@ -128,9 +128,6 @@ public class RokonRenderer implements GLSurfaceView.Renderer {
 				Debug.error("Error with loading screen... " + e.getMessage());
 			}
 			
-			
-			
-			
 			new Thread(new Runnable() {
 				public void run() {
 					_rokon.onLoad();
@@ -166,9 +163,10 @@ public class RokonRenderer implements GLSurfaceView.Renderer {
 		Rokon.setSupport(vbo, drawTex);
 		
 		GLHelper.setGL(gl);
-		gl.glViewport(0, 0, Rokon.getGameWidth(), Rokon.getGameHeight());
-		gl.glClearColor(0, 0, 0, 1);
+		gl.glClearColor(0.1f, 0.3f, 0.1f, 1);
 		gl.glEnable(GL10.GL_BLEND);
+		gl.glDisable(GL10.GL_LIGHTING);
+		gl.glDisable(GL10.GL_DITHER);
 		gl.glDisable(GL10.GL_DEPTH_TEST);
 		GLHelper.blendMode(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
