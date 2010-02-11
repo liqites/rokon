@@ -19,9 +19,9 @@ public class GameActivity extends Rokon {
 		setLandscape();
 		setTexturePath("graphics/");
 		setAudioPath("audio/");
+		showFps();
 		setLoadingScreen("loading_screen.png");
 		setDrawPriority(DRAW_PRIORITY_NORMAL);
-		showFps();
 		createEngine();
 	}
 	
@@ -39,20 +39,23 @@ public class GameActivity extends Rokon {
 		Texture texture;
 
 		public MyScene() {
-			super();
-			sprite = new Sprite(FP.fromInt(100), FP.fromInt(100), FP.fromInt(100), FP.fromInt(100));
-			//Sprite sprite = new Sprite(10, 10, 50, 50);
+			super(1, 500);
+
 			
 			atlas = new TextureAtlas(512, 512);
 			atlas.insert(texture = new Texture("face.png"));
 			
+			for(int i = 0; i < 100; i++) {
+				Sprite sprite = new Sprite(FP.fromDouble(Math.random() * 400), FP.fromDouble(Math.random() * 300), FP.fromInt(100), FP.fromInt(100));
+				sprite.setTexture(texture);
+				add(sprite);
+			}
+			
 			addTextureAtlas(atlas);
 			
-			sprite.setTexture(texture);
 			
-			checkForTouchables(true);
+			//checkForTouchables(true);
 			
-			add(sprite);
 			
 			setChildScene(new MainMenu(), false);
 		}
@@ -66,13 +69,13 @@ public class GameActivity extends Rokon {
 		public void onTouchMove(int x, int y, MotionEvent event) { }
 		public void onTouchUp(int x, int y, MotionEvent event) { 
 			down = false;
-			sprite.scale(FP.ONE, FP.ONE);
+			//sprite.scale(FP.ONE, FP.ONE);
 		}
 		
 		public void onGameLoop() {
 			if(down) {
-				sprite.rotateAboutCentre(FP.fromInt(1));
-				sprite.scaleFromCentre(sprite.getScaleX() + FP.div(1, 100), sprite.getScaleY() +  + FP.div(1, 100));
+				//sprite.rotateAboutCentre(FP.fromInt(1));
+				////sprite.scaleFromCentre(sprite.getScaleX() + FP.div(1, 100), sprite.getScaleY() +  + FP.div(1, 100));
 			}
 		}
 		

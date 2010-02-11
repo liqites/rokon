@@ -2,6 +2,8 @@ package com.stickycoding.Rokon;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import android.view.MotionEvent;
+
 public class Entity {
 	
 	private boolean _dead;
@@ -10,6 +12,7 @@ public class Entity {
 	private int _velX, _velY, _accX, _accY;
 	private int _rotationAngle, _rotationPivotX, _rotationPivotY;
 	private boolean _rotateAboutCentre = true;
+	private boolean _touchOn;
 	
 	private int _id = -1;
 	
@@ -19,6 +22,12 @@ public class Entity {
 	private boolean _requiresPositionUpdate;
 	
 	private int _touchBorder = 0;
+
+	public void onTouch(int x, int y, MotionEvent event) { }
+	public void onTouchDown(int x, int y, MotionEvent event) { }
+	public void onTouchMove(int x, int y, MotionEvent event) { }
+	public void onTouchUp(int x, int y, MotionEvent event) { }
+	public void onTouchExit() { }
 	
 	public void remove() {
 		_dead = true;
@@ -148,11 +157,8 @@ public class Entity {
 	}
 	
 	public void setVelRad(int velocity, int angle) {
-		//TODO set velocity from angle, 0 to 0x10000
-	}
-	
-	public void setVelRadf(float velocity, float angle) {
-		//TODO set velocity from angle, 0 to 1
+		_velY = -FP.mul(velocity, FP.cos(angle));
+		_velX = FP.mul(velocity, FP.sin(angle));
 	}
 	
 	public void setAccX(int accX) {
@@ -262,5 +268,19 @@ public class Entity {
 	public void setTouchBorder(int border) {
 		_touchBorder = border;
 	}
+	
+	protected void setTouchOn() {
+		_touchOn = true;
+	}
+	
+	protected void setTouchOff() {
+		_touchOn = false;
+	}
+	
+	protected boolean isTouchOn() {
+		return _touchOn;
+	}
+	
+	
 	
 }

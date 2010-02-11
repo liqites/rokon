@@ -251,22 +251,38 @@ public class Scene {
 				onTouchUp(x, y, event);
 				break;
 		}
-		if(_checkForTouchables)
+		if(_checkForTouchables) {
 			for(int i = 0; i < _touchable.length; i++)
-				if(_touchable[i] != null)
+				if(_touchable[i] != null) {
 					if(MathHelper.coordInRect(x, y, _touchable[i].getX() - _touchable[i].getTouchBorder(), _touchable[i].getY() - _touchable[i].getTouchBorder(), _touchable[i].getWidth() + _touchable[i].getTouchBorder() + _touchable[i].getTouchBorder(), _touchable[i].getHeight() + _touchable[i].getTouchBorder() + _touchable[i].getTouchBorder())) {
 						switch(event.getAction()) {
 							case MotionEvent.ACTION_DOWN:
+								_touchable[i].onTouch(x, y, event);
+								_touchable[i].onTouchDown(x, y, event);
+								onTouch(_touchable[i], x, y, event);
 								onTouchDown(_touchable[i], x, y, event);
+								_touchable[i].setTouchOn();
 								break;
 							case MotionEvent.ACTION_MOVE:
+								_touchable[i].onTouch(x, y, event);
+								_touchable[i].onTouchMove(x, y, event);
+								onTouch(_touchable[i], x, y, event);
 								onTouchMove(_touchable[i], x, y, event);
 								break;
 							case MotionEvent.ACTION_UP:
+								_touchable[i].onTouch(x, y, event);
+								_touchable[i].onTouchUp(x, y, event);
+								_touchable[i].setTouchOff();
+								onTouch(_touchable[i], x, y, event);
 								onTouchUp(_touchable[i], x, y, event);
 								break;
 						}
+					} else if(_touchable[i].isTouchOn()) {
+						_touchable[i].setTouchOff();
+						_touchable[i].onTouchExit();
 					}
+				}
+		}
 		if(_checkForTouchableLayers)
 			for(int i = 0; i < _layerCount; i++)
 				for(int j = 0; j < _maxEntityCount; j++)
@@ -274,16 +290,27 @@ public class Scene {
 						if(MathHelper.coordInRect(x, y, _entity[i][j].getX() - _entity[i][j].getTouchBorder(), _entity[i][j].getY() - _entity[i][j].getTouchBorder(), _entity[i][j].getWidth() + _entity[i][j].getTouchBorder() + _entity[i][j].getTouchBorder(), _entity[i][j].getHeight() + _entity[i][j].getTouchBorder() + _entity[i][j].getTouchBorder())) {
 							switch(event.getAction()) {
 								case MotionEvent.ACTION_DOWN:
-									onTouchDown(_touchable[i], x, y, event);
+									_entity[i][j].onTouch(x, y, event);
+									_entity[i][j].onTouchDown(x, y, event);
+									_entity[i][j].setTouchOn();
+									onTouchDown(_entity[i][j], x, y, event);
 									break;
 								case MotionEvent.ACTION_MOVE:
-									onTouchMove(_touchable[i], x, y, event);
+									_entity[i][j].onTouch(x, y, event);
+									_entity[i][j].onTouchMove(x, y, event);
+									onTouchMove(_entity[i][j], x, y, event);
 									break;
 								case MotionEvent.ACTION_UP:
-									onTouchUp(_touchable[i], x, y, event);
+									_entity[i][j].onTouch(x, y, event);
+									_entity[i][j].onTouchUp(x, y, event);
+									_entity[i][j].setTouchOff();
+									onTouchUp(_entity[i][j], x, y, event);
 									break;
+							} 
+						} else if(_entity[i][j].isTouchOn()) {
+							_entity[i][j].setTouchOff();
+							_entity[i][j].onTouchExit();
 						}
-					}
 	}
 	
 	public void setChildScene(Scene scene, boolean modal) {

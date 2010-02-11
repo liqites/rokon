@@ -140,7 +140,7 @@ public class Texture {
 	 * Creates a Texture based on an asset file
 	 * @param assetPath absolute path to your texture image from the /assets/ folder
 	 */
-	public Texture(String assetPath) {
+	public Texture(String assetPath, int tileCols, int tileRows) {
 		_textureType = new TextureType(assetPath);
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		opts.inJustDecodeBounds = true;
@@ -151,38 +151,50 @@ public class Texture {
 		}
 		_width = opts.outWidth;
 		_height = opts.outHeight;
-		_tileCols = 1;
-		_tileRows = 1;
+		_tileCols = tileCols;
+		_tileRows = tileRows;
 		_flipped = false;
+	}
+	
+	public Texture(String assetPath) {
+		this(assetPath, 1, 1);
 	}
 	
 	/**
 	 * Creates a Texture based on a Bitmap object, it is recommended to have very few of these - as it takes a lot of memory
 	 * @param bitmap
 	 */
-	public Texture(Bitmap bitmap) {
+	public Texture(Bitmap bitmap, int tileCols, int tileRows) {
 		_textureType = new TextureType(bitmap);
 		_width = bitmap.getWidth();
 		_height = bitmap.getHeight();
-		_tileCols = 1;
-		_tileRows = 1;
+		_tileCols = tileCols;
+		_tileRows = tileRows;
 		_flipped = false;
+	}
+	
+	public Texture(Bitmap bitmap) {
+		this(bitmap, 1, 1);
 	}
 	
 	/**
 	 * Creates a Texture based on a resource id
 	 * @param resourceId
 	 */
-	public Texture(int resourceId) {
+	public Texture(int resourceId, int tileCols, int tileRows) {
 		_textureType = new TextureType(resourceId);
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		opts.inJustDecodeBounds = true;
 		BitmapFactory.decodeResource(Rokon.rokon.getResources(), resourceId, opts);
 		_width = opts.outWidth;
 		_height = opts.outHeight;
-		_tileCols = 1;
-		_tileRows = 1;
+		_tileCols = tileCols;
+		_tileRows = tileRows;
 		_flipped = false;
+	}
+	
+	public Texture(int resourceId) {
+		this(resourceId, 1, 1);
 	}
 	
 	/**
@@ -192,21 +204,26 @@ public class Texture {
 	 * @param height pixel height of Texture
 	 * @param flipped TRUE if the ByteBuffer needs to be flipped when rendered
 	 */
-	public Texture(ByteBuffer byteBuffer, int width, int height, boolean flipped) {
+	public Texture(ByteBuffer byteBuffer, int width, int height, boolean flipped, int tileCols, int tileRows) {
 		_textureType = new TextureType(byteBuffer);
 		_width = width;
 		_height = height;
-		_tileCols = 1;
-		_tileRows = 1;
+		_tileCols = tileCols;
+		_tileRows = tileRows;
 		_flipped = flipped;
+	}
+	
+	public Texture(ByteBuffer byteBuffer, int width, int height, boolean flipped) {
+		this(byteBuffer, width, height, flipped, 1, 1);
 	}
 	
 	private void prepareBuffers() {
 		int bufferCount = _tileCols * _tileRows;
+		int n = 0;
 		_textureBuffer = new TextureBuffer[bufferCount];
-		for(int i = 0; i < bufferCount; i++) {
-			_textureBuffer[i] = new TextureBuffer(this);
-		}
+		for(int i = 0; i < _tileCols; i++)
+			for(int j = 0; j < _tileRows; j++)
+				_textureBuffer[n++] = new TextureBuffer(this, n);
 	}
 	
 	public TextureBuffer getTextureBuffer(int index) {

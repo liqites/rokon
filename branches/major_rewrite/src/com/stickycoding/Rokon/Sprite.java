@@ -19,15 +19,27 @@ public class Sprite extends Entity {
 	private BlendFunction _blendFunction;
 	private boolean _hasCustomBlendFunction;
 	
+	private int _textureTile = 1;
+	
 	private float _red = 1, _green = 1, _blue = 1, _alpha = 1;
 	
-	public Sprite(int x, int y, int width, int height) {
+	public Sprite(int x, int y, int width, int height, Texture texture) {
 		setX(x);
 		setY(y);
 		setWidth(width);
 		setHeight(height);
 		_drawPriority = Rokon.getDrawPriority();
+		if(texture != null)
+			setTexture(texture);
 		preparePointers();
+	}
+	
+	public Sprite(int x, int y, int width, int height) {
+		this(x, y, width, height, null);
+	}
+	
+	public Sprite(int x, int y, Texture texture) {
+		this(x, y, FP.fromInt(texture.getWidth()), FP.fromInt(texture.getHeight()));
 	}
 	
 	private void preparePointers() {
@@ -171,7 +183,7 @@ public class Sprite extends Entity {
 			if(_hasCustomTextureBuffer)
 				GLHelper.texCoordPointer(_customTextureBuffer.getBuffer(), GL10.GL_FLOAT);
 			else
-				GLHelper.texCoordPointer(_texture.getTextureBuffer().getBuffer(), GL10.GL_FLOAT);
+				GLHelper.texCoordPointer(_texture.getTextureBuffer(_textureTile - 1).getBuffer(), GL10.GL_FLOAT);
 		} else {
 			GLHelper.disableTexCoordArray();
 			GLHelper.disableTextures();
@@ -232,6 +244,34 @@ public class Sprite extends Entity {
 		_green = green;
 		_blue = blue;
 		_alpha = alpha;
+	}
+	
+	public void setCustomTextureBuffer(TextureBuffer textureBuffer) {
+		_customTextureBuffer = textureBuffer;
+		_hasCustomTextureBuffer = (textureBuffer != null);
+	}
+	
+	public void removeCustomTextureBuffer() {
+		_customTextureBuffer = null;
+		_hasCustomTextureBuffer = false;
+	}
+	
+	public TextureBuffer getTextureBuffer() {
+		if(_hasCustomTextureBuffer)
+			return _customTextureBuffer;
+		return _texture.getTextureBuffer(_textureTile - 1);
+	}
+	
+	public void setTile(int tileIndex) {
+		_textureTile = tileIndex;
+		if(_textureTile > _texture.getTileCount())
+			_textureTile = _texture.getTileCount();
+		if(_textureTile < 1)
+			_textureTile = 1;
+	}
+	
+	public int getTile() {
+		return _textureTile;
 	}
 
 }

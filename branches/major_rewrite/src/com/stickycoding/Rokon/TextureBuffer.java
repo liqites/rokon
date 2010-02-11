@@ -17,12 +17,31 @@ public class TextureBuffer {
 	private VBO _vbo;
 	
 	public TextureBuffer(Texture texture) {
+		this(texture, 1, 1);
+	}	
+	
+	public TextureBuffer(Texture texture, int tileCol, int tileRow) {
 		setTexture(texture);
 		if(Build.VERSION.SDK == "3")
 			_buffer = ByteBuffer.allocate(8*4);
 		else
 			_buffer = ByteBuffer.allocateDirect(8*4);
 		_buffer.order(ByteOrder.nativeOrder());
+		_tileX = tileCol;
+		_tileY = tileRow;
+		update();
+	}
+	
+	public TextureBuffer(Texture texture, int tileIndex) {
+		setTexture(texture);
+		if(Build.VERSION.SDK == "3")
+			_buffer = ByteBuffer.allocate(8*4);
+		else
+			_buffer = ByteBuffer.allocateDirect(8*4);
+		_buffer.order(ByteOrder.nativeOrder());
+		tileIndex -= 1;
+		_tileX = (tileIndex % _texture.getTileColumnCount()) + 1;
+		_tileY = ((tileIndex - (_tileX - 1)) / _texture.getTileColumnCount()) + 1;
 		update();
 	}
 	
@@ -38,6 +57,20 @@ public class TextureBuffer {
 
 	public Texture getTexture() {
 		return _texture;
+	}
+	
+	public void setTile(int tileIndex) {
+		tileIndex -= 1;
+		_tileX = (tileIndex % _texture.getTileColumnCount()) + 1;
+		_tileY = ((tileIndex - (_tileX - 1)) / _texture.getTileColumnCount()) + 1;
+		tileIndex += 1;
+		update();
+	}
+	
+	public void setTile(int col, int row) {
+		_tileX = col;
+		_tileY = row;
+		update();
 	}
 	
 	private float _x1, _y1, _x2, _y2, xs, ys;

@@ -2,15 +2,15 @@ package com.stickycoding.RokonExamples;
 
 import com.stickycoding.Rokon.FP;
 import com.stickycoding.Rokon.Scene;
-import com.stickycoding.Rokon.Sprite;
 import com.stickycoding.Rokon.Texture;
 import com.stickycoding.Rokon.TextureAtlas;
+import com.stickycoding.Rokon.Entities.Button;
 
 public class MainMenu extends Scene {
 	
 	TextureAtlas mainMenuAtlas;
 	Texture target;
-	Sprite sprite;
+	Button sprite;
 	
 	public MainMenu() {
 		super();
@@ -20,9 +20,13 @@ public class MainMenu extends Scene {
 		
 		addTextureAtlas(mainMenuAtlas);
 		
-		sprite = new Sprite(FP.fromInt(200), FP.fromInt(100), FP.fromInt(100), FP.fromInt(100));
-		add(sprite);
+		sprite = new Button(FP.fromInt(200), FP.fromInt(100), FP.fromInt(100), FP.fromInt(100));
+		//sprite.setTexture(target, target, target);
 		sprite.setTexture(target);
+		add(sprite);
+		addTouchable(sprite);
+
+		checkForTouchables();
 	}
 	
 	
