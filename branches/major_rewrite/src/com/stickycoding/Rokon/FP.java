@@ -216,6 +216,10 @@ public class FP {
           result = mul(result, f); 
           return result; 
      } 
+     
+     public static int square(int f) {
+    	 return mul(f, f);
+     }
 
      static final int AS1 = -1228; 
      static final int AS2 = 4866; 
