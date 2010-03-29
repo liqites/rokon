@@ -77,6 +77,8 @@ public class Sprite extends Entity {
 	}
 	
 	protected void onDraw(GL10 gl) {
+		if(!isVisible())
+			return;
 		if(Rokon.getDrawPriority() == Rokon.DRAW_PRIORITY_VBO) {
 			onDrawVBO(gl);
 			return;

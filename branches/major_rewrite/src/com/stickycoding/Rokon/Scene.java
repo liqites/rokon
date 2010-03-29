@@ -20,6 +20,9 @@ public class Scene {
 	private Entity[][] _entity;
 	private Entity[] _touchable;
 	
+	private Window _backgroundWindow;
+	private Window[] _window;
+	
 	private boolean _hasChildScene, _childSceneModal;
 	private Scene _childScene;
 	
@@ -70,10 +73,35 @@ public class Scene {
 			_entity[i] = new Entity[_maxEntityCount];
 		_textureAtlas = new ArrayList<TextureAtlas>();
 		_touchable = new Entity[Constants.MAX_TOUCHABLE_ENTITIES];
+		_window = new Window[_layerCount];
 	}
 	
 	public Scene() {
 		this(Rokon.getDefaultLayerCount(), Rokon.getDefaultMaxEntityCount());
+	}
+	
+	public void setWindow(int layer, Window window) {
+		_window[layer] = window;
+	}
+	
+	public void removeWindow(int layer) {
+		_window[layer] = null;
+	}
+	
+	public Window getWindow(int layer) {
+		return _window[layer];
+	}
+	
+	public void setBackgroundWindow(Window window) {
+		_backgroundWindow = window;
+	}
+	
+	public void removeBackgroundWindow() {
+		_backgroundWindow = null;
+	}
+	
+	public Window getBackgroundWindow() {
+		return _backgroundWindow;
 	}
 	
 	public int getMaxEntityCount() { 
@@ -137,17 +165,38 @@ public class Scene {
 	protected void onDraw(GL10 gl) {
 		onPreDraw(gl);
 		if(_hasBackground) {
-			_background.onDraw(gl);
-			onPostBackgroundDraw(gl);
+			if(_backgroundWindow != null) {
+				gl.glPushMatrix();
+				_backgroundWindow.onDraw(gl);
+				_background.onDraw(gl);
+				onPostBackgroundDraw(gl);
+				gl.glPopMatrix();
+			} else {
+				_background.onDraw(gl);
+				onPostBackgroundDraw(gl);
+			}
 		}
 		for(int i = 0; i < _layerCount; i++) {
-			onPreDraw(gl, i);
-			for(int j = 0; j < _maxEntityCount; j++)
-				if(_entity[i][j] != null) {
-					_entity[i][j].onUpdate();
-					_entity[i][j].onDraw(gl);
-				}
-			onPostDraw(gl, i);
+			if(_window[i] != null) {
+				gl.glPushMatrix();
+				_window[i].onDraw(gl);
+				onPreDraw(gl, i);
+				for(int j = 0; j < _maxEntityCount; j++)
+					if(_entity[i][j] != null) {
+						_entity[i][j].onUpdate();
+						_entity[i][j].onDraw(gl);
+					}
+				onPostDraw(gl, i);
+				gl.glPopMatrix();
+			} else {
+				onPreDraw(gl, i);
+				for(int j = 0; j < _maxEntityCount; j++)
+					if(_entity[i][j] != null) {
+						_entity[i][j].onUpdate();
+						_entity[i][j].onDraw(gl);
+					}
+				onPostDraw(gl, i);
+			}
 		}
 		onPostDraw(gl);
 		if(_hasChildScene)

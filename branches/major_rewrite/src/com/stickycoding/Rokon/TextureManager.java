@@ -196,7 +196,7 @@ public class TextureManager {
 				Debug.print("Allocating new texture " + textures[0]);
 				gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
 				setCurrentTexture(textures[0]);
-				Bitmap bmp = Bitmap.createBitmap(_loadQueue[i].getWidth(), _loadQueue[i].getHeight(), Bitmap.Config.ARGB_8888);
+				Bitmap bmp = Bitmap.createBitmap(_loadQueue[i].getWidth(), _loadQueue[i].getHeight(), Bitmap.Config.ARGB_4444);
 				GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bmp, 0);
 				bmp.recycle();
 				bmp = null;

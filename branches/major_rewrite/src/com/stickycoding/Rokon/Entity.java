@@ -13,6 +13,7 @@ public class Entity {
 	private int _rotationAngle, _rotationPivotX, _rotationPivotY;
 	private boolean _rotateAboutCentre = true;
 	private boolean _touchOn;
+	private boolean _visible = true;
 	
 	private int _id = -1;
 	
@@ -279,6 +280,22 @@ public class Entity {
 	
 	protected boolean isTouchOn() {
 		return _touchOn;
+	}
+	
+	public void setVisible(boolean visible) {
+		_visible = visible;
+	}
+	
+	public void show() {
+		_visible = true;
+	}
+	
+	public void hide() {
+		_visible = false;
+	}
+	
+	public boolean isVisible() {
+		return _visible;
 	}
 	
 	
