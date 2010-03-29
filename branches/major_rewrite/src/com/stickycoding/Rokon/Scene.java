@@ -20,6 +20,10 @@ public class Scene {
 	private Entity[][] _entity;
 	private Entity[] _touchable;
 	
+	private Entity[] _drawOrderEntity;
+	
+	private int _drawOrder[];
+	
 	private Window _backgroundWindow;
 	private Window[] _window;
 	
@@ -67,13 +71,23 @@ public class Scene {
 	protected Scene(int layerCount, int maxEntityCount) {
 		rokon = Rokon.rokon;
 		_layerCount = layerCount;
+		_drawOrder = new int[_layerCount];
 		_maxEntityCount = maxEntityCount;
 		_entity = new Entity[_layerCount][];
 		for(int i = 0; i < _layerCount; i++)
 			_entity[i] = new Entity[_maxEntityCount];
+		_drawOrderEntity = new Entity[_maxEntityCount];
 		_textureAtlas = new ArrayList<TextureAtlas>();
 		_touchable = new Entity[Constants.MAX_TOUCHABLE_ENTITIES];
 		_window = new Window[_layerCount];
+	}
+	
+	public void setDrawOrder(int layer, int order) {
+		_drawOrder[layer] = order;
+	}
+	
+	public int getDrawOrder(int layer) {
+		return _drawOrder[layer];
 	}
 	
 	public Scene() {
@@ -160,7 +174,7 @@ public class Scene {
 	public void removeBackground() {
 		_background = null;
 		_hasBackground = false;
-	}
+	} 
 	
 	protected void onDraw(GL10 gl) {
 		onPreDraw(gl);
@@ -181,11 +195,58 @@ public class Scene {
 				gl.glPushMatrix();
 				_window[i].onDraw(gl);
 				onPreDraw(gl, i);
-				for(int j = 0; j < _maxEntityCount; j++)
-					if(_entity[i][j] != null) {
-						_entity[i][j].onUpdate();
-						_entity[i][j].onDraw(gl);
+				if(_drawOrder[i] == DrawOrder.NORMAL) { 
+					for(int j = 0; j < _maxEntityCount; j++)
+						if(_entity[i][j] != null) {
+							_entity[i][j].onUpdate();
+							_entity[i][j].onDraw(gl);
+						}
+				} else if(_drawOrder[i] == DrawOrder.TOP_TO_BOTTOM) {
+					
+					for(int j = 0; j < _maxEntityCount; j++) {		
+
+						int lowestY = 0, lowestYIndex = -1;
+						
+						//Loop through all of them, find next lowest one
+						for(int k = 0; k < _maxEntityCount; k++) {
+							if(_entity[i][k] != null) {
+								
+								//If it is already chosen, skip it
+								boolean isChosen = false;
+								for(int l = 0; l < _maxEntityCount; l++)
+									if(_drawOrderEntity[l] == _entity[i][k])
+										isChosen = true;
+								
+								//If it is not chosen, check
+								if(!isChosen) {
+									if(lowestYIndex == -1 || (_entity[i][k].getY() < lowestY)) {
+										lowestY = _entity[i][k].getY();
+										lowestYIndex = k;
+									}
+								}
+							}
+						}
+						
+						//If lowest index is not -1, add
+						if(lowestYIndex > -1) {
+							_drawOrderEntity[j] = _entity[i][lowestYIndex];
+						} else
+							break;
 					}
+					
+					
+					//Draw these
+					for(int j = 0; j < _maxEntityCount; j++)
+						if(_drawOrderEntity[j] != null) {
+							_drawOrderEntity[j].onUpdate();
+							_drawOrderEntity[j].onDraw(gl);
+						}
+					
+					//Remove from queue
+					for(int k = 0; k < _maxEntityCount; k++) {
+						_drawOrderEntity[k] = null;
+					}
+				}
 				onPostDraw(gl, i);
 				gl.glPopMatrix();
 			} else {

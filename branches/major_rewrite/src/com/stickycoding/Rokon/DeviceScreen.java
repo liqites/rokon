@@ -9,7 +9,7 @@ public class DeviceScreen {
 	
 	public static int WIDTH, HEIGHT, HALF_HEIGHT, HALF_WIDTH;
 
-	protected static void determine(Activity activity) {
+	public static void determine(Activity activity) {
 		_dm = new DisplayMetrics();
 		activity.getWindowManager().getDefaultDisplay().getMetrics(_dm);
 		WIDTH = FP.fromInt(_dm.widthPixels);

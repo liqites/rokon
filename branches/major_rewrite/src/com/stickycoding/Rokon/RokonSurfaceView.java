@@ -14,6 +14,7 @@ public class RokonSurfaceView extends GLSurfaceView {
 	    _rokon  = rokon;
 	    renderer  = new RokonRenderer(rokon);
 	    setRenderer(renderer);
+        setKeepScreenOn(true);
 	}
 
     public boolean onTouchEvent(final MotionEvent event) {
