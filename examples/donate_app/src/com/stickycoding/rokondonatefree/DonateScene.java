@@ -1,4 +1,4 @@
-package com.stickycoding.rokondonate6;
+package com.stickycoding.rokondonatefree;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;

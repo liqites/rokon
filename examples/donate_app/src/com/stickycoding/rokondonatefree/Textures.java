@@ -1,4 +1,4 @@
-package com.stickycoding.rokondonate6;
+package com.stickycoding.rokondonatefree;
 
 import com.stickycoding.rokon.Texture;
 import com.stickycoding.rokon.TextureAtlas;
